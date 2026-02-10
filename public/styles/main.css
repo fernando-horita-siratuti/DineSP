@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+
 :root {
     --primary: #382f2f;
     --primary-glow: #382f2f;
@@ -117,6 +119,43 @@ footer {
     font-family: 'Raleway', sans-serif;
     font-weight: 500;
     color: #382f2f;
+}
+
+#apiResultsContainer .list-group-item {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500;
+    font-size: 1.5rem;
+    color: #495057;
+    text-align: center;
+    
+    background-color: #ffffff;
+    border: none;
+    border-radius: 16px;
+    
+    max-width: 600px; 
+    width: 100%;      
+    margin-left: auto;  
+    margin-right: auto; 
+    
+    padding-top: 25px;   
+    padding-bottom: 25px;
+
+    margin-bottom: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    
+    transition: all 0.3s ease;
+}
+
+#apiResultsContainer .list-group-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    cursor: pointer;
+}
+
+#apiResultsContainer .list-group {
+    background-color: transparent;
+    border-radius: 0;
 }
 
 @media (max-width: 768px) {

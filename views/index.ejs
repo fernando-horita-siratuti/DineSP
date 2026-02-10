@@ -51,6 +51,7 @@
         if (btn) { 
           btn.textContent = selectedNeighborhood;
         }
+        btn.classList.remove('border', 'border-danger', 'border-2');
       });
     });
 
@@ -62,15 +63,38 @@
         if (btn) {
           btn.textContent = selectedCuisine;
         }
+        btn.classList.remove('border', 'border-danger', 'border-2');
       });
     });
 
     const searchBtn = document.querySelector('.search-btn');
+
     function handleSearch() {
-      const qn = encodeURIComponent(selectedNeighborhood || 'Any');
-      const qc = encodeURIComponent(selectedCuisine || 'Any');
+      const neighborhoodBtn = document.getElementById('neighborhoodSelect');
+      const cuisineBtn = document.getElementById('cuisineSelect');
+
+      if (!selectedNeighborhood) {
+        alert("Please select a neighborhood to continue.");
+        neighborhoodBtn.classList.add('border', 'border-danger', 'border-2');
+        return;
+      }
+
+      if (!selectedCuisine) {
+        alert("Please select a cuisine type to continue.");
+        cuisineBtn.classList.add('border', 'border-danger', 'border-2');
+        return;
+      }
+
+      if (selectedNeighborhood === "Any" && selectedCuisine === "Any") {
+        alert("Please specify a neighborhood or a cuisine type to continue.");
+        return;
+      }
+
+      const qn = encodeURIComponent(selectedNeighborhood);
+      const qc = encodeURIComponent(selectedCuisine);
       window.location.href = `/view?neighborhood=${qn}&cuisine=${qc}`;
     }
+
     if (searchBtn) searchBtn.addEventListener('click', (e) => {
       e.preventDefault();
       handleSearch();

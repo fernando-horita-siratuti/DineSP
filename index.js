@@ -25,15 +25,15 @@ app.get("/", (req, res) => {
                             
                             <form id="searchForm" class="row g-3 mb-4">
                                 <div class="col-md-6">
-                                    <label for="neighborhoodSelect" class="form-label">Neighbourhoods</label>
+                                    <label for="neighborhoodSelect" class="form-label">Neighborhoods</label>
                                     <div class="dropdown">
                                         <button class="btn dropdown-search dropdown-toggle w-100 text-start" type="button" 
                                                 id="neighborhoodSelect" data-bs-toggle="dropdown" aria-expanded="false">
-                                            Choose a neighbourhood
+                                            Choose a neighborhood
                                         </button>
                                         <ul class="dropdown-menu w-100" style="max-height: 300px; overflow-y: auto;">
                                             <li><input type="text" class="form-control mx-2 mb-2" id="searchNeighborhood" 
-                                                    placeholder="Buscar bairro..." style="width: calc(100% - 1rem);"></li>
+                                                    placeholder="Search neighborhood..." style="width: calc(100% - 1rem);"></li>
                                             <li><hr class="dropdown-divider"></li>
                                             <div id="neighborhoodList">
                                                 <li><a class="dropdown-item" href="" data-value="Any">Any</a></li>
@@ -75,12 +75,12 @@ app.get("/", (req, res) => {
                                         </button>
                                         <ul class="dropdown-menu w-100" style="max-height: 300px; overflow-y: auto;">
                                             <li><input type="text" class="form-control mx-2 mb-2" id="searchCuisine" 
-                                                    placeholder="Buscar culinária..." style="width: calc(100% - 1rem);"></li>
+                                                    placeholder="Search cuisine..." style="width: calc(100% - 1rem);"></li>
                                             <li><hr class="dropdown-divider"></li>
                                             <div id="cuisineList">
                                                 <li><a class="dropdown-item" href="" data-value="Any">Any</a></li>
                                                 <li><a class="dropdown-item" href="" data-value="African">African</a></li>
-                                                <li><a class="dropdown-item" href="" data-value="Middle Eastern">Arabic</a></li>
+                                                <li><a class="dropdown-item" href="" data-value="Arabic">Arabic</a></li>
                                                 <li><a class="dropdown-item" href="" data-value="Argentinian">Argentinian</a></li>
                                                 <li><a class="dropdown-item" href="" data-value="Bar">Bar</a></li>
                                                 <li><a class="dropdown-item" href="" data-value="Bakery">Bakery</a></li>
@@ -89,7 +89,6 @@ app.get("/", (req, res) => {
                                                 <li><a class="dropdown-item" href="" data-value="Burgers">Burgers</a></li>
                                                 <li><a class="dropdown-item" href="" data-value="Chinese">Chinese</a></li>
                                                 <li><a class="dropdown-item" href="" data-value="Coffee Shop">Coffee Shop</a></li>
-                                                <li><a class="dropdown-item" href="" data-value="Contemporary">Contemporary</a></li>
                                                 <li><a class="dropdown-item" href="" data-value="French">French</a></li>
                                                 <li><a class="dropdown-item" href="" data-value="German">German</a></li>
                                                 <li><a class="dropdown-item" href="" data-value="Ice Cream Shop">Ice Cream Shop</a></li>
@@ -102,9 +101,7 @@ app.get("/", (req, res) => {
                                                 <li><a class="dropdown-item" href="" data-value="Portuguese">Portuguese</a></li>
                                                 <li><a class="dropdown-item" href="" data-value="Seafood">Seafood</a></li>
                                                 <li><a class="dropdown-item" href="" data-value="Spanish">Spanish</a></li>
-                                                <li><a class="dropdown-item" href="" data-value="Vegan">Vegan</a></li>
                                                 <li><a class="dropdown-item" href="" data-value="Vegetarian">Vegetarian</a></li>
-                                                <li><a class="dropdown-item" href="" data-value="Other">Other</a></li>
                                             </div>
                                         </ul>
                                     </div>
@@ -122,16 +119,111 @@ app.get("/", (req, res) => {
   });
 });
 
-app.get("/view", (req, res) => {
+app.get("/view", async (req, res) => {
+  const neighborhood = req.query.neighborhood;
+  const cuisine = req.query.cuisine;
+  let restaurantNamesList = "";
+  let apiSectionHtml = "";
+
+  try {
+    if (neighborhood && cuisine) {
+        const categoriesMap = {
+            'Any': 'catering.restaurant',
+            'African': 'catering.restaurant.african',
+            'Arabic': 'catering.restaurant.arab',
+            'Argentinian': 'catering.restaurant.argentinian',
+            'Bar': 'catering.bar',
+            'Bakery': 'commercial.food_and_drink.bakery', 
+            'Brazilian': 'catering.restaurant.brazilian',
+            'Brazilian Barbecue': 'catering.restaurant.barbecue', 
+            'Burgers': 'catering.restaurant.burger',
+            'Chinese': 'catering.restaurant.chinese',
+            'Coffee Shop': 'catering.cafe.coffee_shop',
+            'French': 'catering.restaurant.french',
+            'German': 'catering.restaurant.german',
+            'Ice Cream Shop': 'catering.ice_cream',
+            'Italian': 'catering.restaurant.italian',
+            'Japanese': 'catering.restaurant.japanese',
+            'Korean': 'catering.restaurant.korean',
+            'Mexican': 'catering.restaurant.mexican',
+            'Peruvian': 'catering.restaurant.peruvian',
+            'Pizza': 'catering.restaurant.pizza',
+            'Portuguese': 'catering.restaurant.portuguese',
+            'Seafood': 'catering.restaurant.seafood',
+            'Spanish': 'catering.restaurant.spanish',
+            'Vegetarian': 'catering.restaurant.vegetarian',
+        };
+        const apiCategory = categoriesMap[cuisine] || 'catering.restaurant';
+        const neighborhoodId = await getNeighborhoodId(neighborhood);
+        const allEstablishments = await getEstablishment(neighborhoodId, apiCategory);
+        
+        if (allEstablishments.length > 0) {
+            restaurantNamesList = `<ul class="list-group">`;
+            allEstablishments.forEach(restaurantName => {
+                if (restaurantName != undefined ) {
+                    restaurantNamesList += `<li class="list-group-item">${restaurantName}</li>`;
+                }
+            });
+            restaurantNamesList += `</ul>`;
+
+            if (neighborhood === "Any") {
+                apiSectionHtml = `
+                                    <div class="mb-5">
+                                        <h1 class="fw-bold mb-3">All ${cuisine} establishments 🔎</h1>
+                                        <div id="apiResultsContainer"> 
+                                            ${restaurantNamesList} 
+                                        </div>
+                                    </div>
+                                    <hr class="my-5">
+                                `;
+            } else if (cuisine === "Any") {
+                apiSectionHtml = `
+                                    <div class="mb-5">
+                                        <h1 class="fw-bold mb-3">All establishments in ${neighborhood} 🔎</h1>
+                                        <div id="apiResultsContainer"> 
+                                            ${restaurantNamesList} 
+                                        </div>
+                                    </div>
+                                    <hr class="my-5">
+                                `;
+            } else {
+                apiSectionHtml = `
+                                    <div class="mb-5">
+                                        <h1 class="fw-bold mb-3">All ${cuisine} establishments in ${neighborhood} 🔎</h1>
+                                        <div id="apiResultsContainer"> 
+                                            ${restaurantNamesList} 
+                                        </div>
+                                    </div>
+                                    <hr class="my-5">
+                                `;
+            }
+            
+        } else {
+            apiSectionHtml = `
+                                <div class="mb-5">
+                                    <h1 class="fw-bold mb-3 fs-2">Unfortunately, the API has no ${cuisine} establishments registered in ${neighborhood} 😢</h1>
+                                </div>
+                                <hr class="my-5">
+                            `;
+        }
+    }
+  } catch (error) {
+    console.error(error);
+    restaurantNamesList = "<p>Error loading API data.</p>";
+  }
+
   res.render("index.ejs", {
     viewSection: `
-                  <div class="container-fluid" id="viewScreen">
-                    <div class="container" id="viewTextContainer">
-                        <h1 class="fw-bold">All Reviews 🍽️</h1>
-                        <div id="postsContainer"></div>
+                    <div class="container-fluid" id="viewScreen">
+                        <div class="container" id="viewTextContainer">
+                            ${apiSectionHtml}
+                            <div>
+                                <h1 class="fw-bold mb-3">Community Reviews 👨‍🍳</h1>
+                                <div id="postsContainer" class="mt-4"></div>
+                            </div>
+                        </div>
                     </div>
-                  </div>
-                 `
+                `
   });
 });
 
@@ -195,7 +287,6 @@ app.get("/review", (req, res) => {
                                 <option value="Burgers">Burgers</option>
                                 <option value="Chinese">Chinese</option>
                                 <option value="Coffee Shop">Coffee Shop</option>
-                                <option value="Contemporary">Contemporary</option>
                                 <option value="French">French</option>
                                 <option value="German">German</option>
                                 <option value="Ice Cream Shop">Ice Cream Shop</option>
@@ -208,9 +299,7 @@ app.get("/review", (req, res) => {
                                 <option value="Portuguese">Portuguese</option>
                                 <option value="Seafood">Seafood</option>
                                 <option value="Spanish">Spanish</option>
-                                <option value="Vegan">Vegan</option>
                                 <option value="Vegetarian">Vegetarian</option>
-                                <option value="Other">Other</option>
                             </select>
                         </div>
 
@@ -233,19 +322,13 @@ app.get("/review", (req, res) => {
   });
 });
 
-async function getPlaceId(bairro, cidade = "São Paulo") {
+async function getNeighborhoodId(neighborhood, cidade = "São Paulo") {
     try {
-        const location = encodeURIComponent(`${bairro}, ${cidade}, BR`);
+        const location = encodeURIComponent(`${neighborhood}, ${cidade}, BR`);
         const url = `https://api.geoapify.com/v1/geocode/search?text=${location}&format=json&apiKey=${apiKey}`;
         const res = await axios.get(url);
         const body = res.data;
 
-        if (!body.results || body.results.length === 0) {
-            console.log(`There are no restaurants registered in: ${bairro}`);
-
-            return;
-        }
-
         return body.results[0].place_id;
     } catch (err) {
         console.error("Error on calling Geoapify:", err.message || err);
@@ -254,28 +337,25 @@ async function getPlaceId(bairro, cidade = "São Paulo") {
     }
 }
 
-async function getEstablishment(placeId, category) {
+async function getEstablishment(neighborhoodId, category) {
     try {
-        const q = encodeURIComponent(`${bairro}, ${cidade}, BR`);
-        const url = `https://api.geoapify.com/v2/places?categories=${category}&filter=place:${cityId}&apiKey=${apiKey}`;
+        const url = `https://api.geoapify.com/v2/places?categories=${category}&filter=place:${neighborhoodId}&apiKey=${apiKey}`;
         const res = await axios.get(url);
         const body = res.data;
 
-        if (!body.results || body.results.length === 0) {
-            console.log(`There are no restaurants classified as ${category} registered in: ${bairro}`);
-
-            return;
+        if (!body.features || body.features.length === 0) {
+            return [];
         }
+
+        const establishmentNames = body.features.map((item) => item.properties.name);
         
-        return body.results[0].place_id;
+        return establishmentNames;
     } catch (err) {
         console.error("Error on calling Geoapify:", err.message || err);
 
         return;
     }
 }
-
-console.log(getPlaceId("Pinheiros"));
 
 // app.post("/get-secret", async (req, res) => {
 //   const searchId = req.body.id;
