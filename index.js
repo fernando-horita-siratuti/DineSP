@@ -360,7 +360,9 @@ async function getEstablishment(neighborhoodId, category) {
             return [];
         }
 
-        const establishmentNames = body.features.map((item) => item.properties.name);
+        let establishmentNames = body.features.map((item) => item.properties.name);
+
+        establishmentNames = establishmentNames.sort();
         
         return establishmentNames;
     } catch (err) {
