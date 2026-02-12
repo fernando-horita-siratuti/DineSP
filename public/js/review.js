@@ -43,13 +43,23 @@ function addCuisine(cuisine) {
 
 function addRating(rating) {
   const notaLimpa = (rating || "").trim();
-  if (!notaLimpa) return;
+  if (!notaLimpa) {
+    return;
+  }
 
   let notaFinal;
   if (notaLimpa.length > 3) {
-    notaFinal = 'Rating: ' + notaLimpa.slice(0, 3) + '/10';
+    if (notaLimpa >= 8) {
+      notaFinal = 'Rating: ' + notaLimpa.slice(0, 3) + '/10 ⭐';
+    } else {
+      notaFinal = 'Rating: ' + notaLimpa.slice(0, 3) + '/10';
+    }
   } else {
-    notaFinal = 'Rating: ' + notaLimpa + '/10';
+    if (notaLimpa >= 8) {
+      notaFinal = 'Rating: ' + notaLimpa + '/10 ⭐';
+    } else {
+      notaFinal = 'Rating: ' + notaLimpa + '/10';
+    }
   }
   ratingsWrite.push(notaFinal);
   saveToStorage();
