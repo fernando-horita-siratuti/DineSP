@@ -15,12 +15,12 @@ function getArraysFromStorage() {
     const reviews = JSON.parse(localStorage.getItem(REVIEW_TEXTS_KEY) || "[]");
 
     return { 
-        usernames: users, 
-        restaurantTexts: restaurants, 
-        neighborhoods: locations, 
-        cuisines: gastronomies,
-        ratings: rates, 
-        reviewTexts: reviews 
+      usernames: users, 
+      restaurantTexts: restaurants, 
+      neighborhoods: locations, 
+      cuisines: gastronomies,
+      ratings: rates, 
+      reviewTexts: reviews 
     };
   } catch (err) {
     console.error("Error localStorage:", err);
@@ -36,8 +36,8 @@ function updateUI() {
   const targetRestaurant = params.get('restaurantName'); 
 
   if (!targetRestaurant) {
-      container.innerHTML = "";
-      return; 
+    container.innerHTML = "";
+    return; 
   }
 
   const { usernames, restaurantTexts, neighborhoods, cuisines, ratings, reviewTexts } = getArraysFromStorage();
@@ -48,7 +48,7 @@ function updateUI() {
 
   for (let i = count - 1; i >= 0; i--) {
     const user = usernames[i] || "Anonymous";
-    const rest = restaurantTexts[i] || "Restaurant";
+    const rest = restaurantTexts[i].slice(12, restaurantTexts[i].length) || "Restaurant";
     const neigh = neighborhoods[i] || "Unknown"; 
     const cuis = cuisines[i] || "Unknown"; 
     const rate = ratings[i] || "Rating: N/A";
@@ -58,7 +58,7 @@ function updateUI() {
     const targetClean = targetRestaurant.trim().toLowerCase();
 
     if (restClean !== targetClean) {
-        continue;
+      continue;
     }
 
     reviewsFound = true;
@@ -70,11 +70,11 @@ function updateUI() {
     bodyDiv.className = "card-body";
     
     const htmlContent = `
-                            <h3 class="card-title fw-bold" style="color: #382f2f;">${user}</h3>
-                            <h5 class="card-subtitle mb-1 fw-bold" style="color: #382f2f;">${rest}</h5>
-                            <p class="text-muted mb-2 fs-6" style="font-size: 0.9rem;">📍 ${neigh} &nbsp; | &nbsp; 🍽️ ${cuis}</p>
-                            <h5 class="card-subtitle mb-2 fw-bold" style="color: #382f2f;">${rate}</h5>
-                            <p class="card-text mt-3">${review}</p>
+                          <h3 class="card-title fw-bold" style="color: #382f2f;">${user}</h3>
+                          <h5 class="card-subtitle mb-1 fw-bold" style="color: #382f2f;">${rest}</h5>
+                          <p class="text-muted mb-2 fs-6" style="font-size: 0.9rem;">📍 ${neigh} &nbsp; | &nbsp; 🍽️ ${cuis}</p>
+                          <h5 class="card-subtitle mb-2 fw-bold" style="color: #382f2f;">${rate}</h5>
+                          <p class="card-text mt-3">${review}</p>
                         `;
     
     bodyDiv.innerHTML = htmlContent;
