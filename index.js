@@ -43,7 +43,6 @@ app.get("/api/verify-restaurant", async (req, res) => {
             'Portuguese': 'catering.restaurant.portuguese',
             'Seafood': 'catering.restaurant.seafood',
             'Spanish': 'catering.restaurant.spanish',
-            'Vegetarian': 'catering.restaurant.vegetarian',
             'Other': 'catering.restaurant'
         };
         
@@ -152,7 +151,6 @@ app.get("/", (req, res) => {
                                                 <li><a class="dropdown-item" href="" data-value="Portuguese">Portuguese</a></li>
                                                 <li><a class="dropdown-item" href="" data-value="Seafood">Seafood</a></li>
                                                 <li><a class="dropdown-item" href="" data-value="Spanish">Spanish</a></li>
-                                                <li><a class="dropdown-item" href="" data-value="Vegetarian">Vegetarian</a></li>
                                             </div>
                                         </ul>
                                     </div>
@@ -232,7 +230,6 @@ app.get("/view", async (req, res) => {
             'Portuguese': 'catering.restaurant.portuguese',
             'Seafood': 'catering.restaurant.seafood',
             'Spanish': 'catering.restaurant.spanish',
-            'Vegetarian': 'catering.restaurant.vegetarian',
             'Other': 'catering.restaurant'
         };
 
@@ -258,23 +255,30 @@ app.get("/view", async (req, res) => {
                 const paginatedEstablishments = allEstablishments.slice(startIndex, endIndex);
 
                 listContentHtml = `<ul class="list-group">`;
-                paginatedEstablishments.forEach(restaurantName => {
-                    if (restaurantName) {
-                        const encodedNeighborhood = encodeURIComponent(neighborhood);
-                        const encodedCuisine = encodeURIComponent(cuisine);
-                        const encodedRestaurantName = encodeURIComponent(restaurantName);
+                paginatedEstablishments.forEach(establishment => {
+                    const restaurantName = "­­­­­ ­" + establishment.name; // Invisible characters added to align with the adress 
+                    const restaurantAddress = establishment.address || "Address not available";
+                        if (restaurantName) {
+                            const encodedNeighborhood = encodeURIComponent(neighborhood);
+                            const encodedCuisine = encodeURIComponent(cuisine);
+                            const encodedRestaurantName = encodeURIComponent(restaurantName);
 
-                        listContentHtml += `
-                                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                                    <span class="fw-bold text-start ms-3">${restaurantName}</span>
-                                                    <a href="/view?neighborhood=${encodedNeighborhood}&cuisine=${encodedCuisine}&restaurantName=${encodedRestaurantName}&page=${page}" 
-                                                    class="text-primary text-decoration-none me-3" 
-                                                    style="font-size: 0.9rem; white-space: nowrap; margin-left: 15px;">
-                                                    See the reviews <i class="bi bi-arrow-right"></i>
-                                                    </a>
-                                                </li>
-                                            `;
-                    }
+                            listContentHtml += `
+                                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                        <div class="ms-3 text-start">
+                                                            <span class="fw-bold d-block fs-5">${restaurantName}</span>
+                                                            <span class="text-muted fw-bold" style="font-size: 0.85rem;">
+                                                                📍 ${restaurantAddress}
+                                                            </span>
+                                                        </div>
+                                                        <a href="/view?neighborhood=${encodedNeighborhood}&cuisine=${encodedCuisine}&restaurantName=${encodedRestaurantName}&page=${page}" 
+                                                        class="text-primary text-decoration-none me-3" 
+                                                        style="font-size: 0.9rem; white-space: nowrap; margin-left: 15px;">
+                                                        See the reviews <i class="bi bi-arrow-right"></i>
+                                                        </a>
+                                                    </li>
+                                                `;
+                        }
                 });
                 listContentHtml += `</ul>`;
 
@@ -291,17 +295,17 @@ app.get("/view", async (req, res) => {
 
                     const pageLink = `/view?neighborhood=${encodedNeighborhood}&cuisine=${encodedCuisine}&page=${i}`;
 
-                    paginationHtml += `
-                        <a href="${pageLink}" class="text-decoration-none d-flex flex-column align-items-center" 
-                        style="transition: all 0.3s ease; transform: ${transform}; opacity: ${opacity};">
-                            
-                            <img src="/images/chefHat.png" alt="Page ${i}" width="45" height="45">
+                    paginationHtml +=   `
+                                            <a href="${pageLink}" class="text-decoration-none d-flex flex-column align-items-center" 
+                                            style="transition: all 0.3s ease; transform: ${transform}; opacity: ${opacity};">
+                                                
+                                                <img src="/images/chefHat.png" alt="Page ${i}" width="45" height="45">
 
-                            <span class="fw-bold mt-2" style="color: ${color}; font-family: 'Poppins', sans-serif; font-size: 0.9rem;">
-                                ${i}
-                            </span>
-                        </a>
-                    `;
+                                                <span class="fw-bold mt-2" style="color: ${color}; font-family: 'Poppins', sans-serif; font-size: 0.9rem;">
+                                                    ${i}
+                                                </span>
+                                            </a>
+                                        `;
                 }
 
                 paginationHtml += `</div>`;
@@ -315,14 +319,14 @@ app.get("/view", async (req, res) => {
             listContentHtml = `<p class="text-center mt-4 text-danger">Location not found.</p>`;
         }
 
-        viewContentHtml = `
-            <div class="mb-5">
-                <h1 class="fw-bold mb-3 text-center">Restaurants found 🔎</h1>
-                <div id="apiResultsContainer"> 
-                    ${listContentHtml} 
-                </div>
-            </div>
-        `;
+        viewContentHtml =   `
+                                <div class="mb-5">
+                                    <h1 class="fw-bold mb-5 text-center">Restaurants found 🔎</h1>
+                                    <div id="apiResultsContainer"> 
+                                        ${listContentHtml} 
+                                    </div>
+                                </div>
+                            `;
     }
 
   } catch (error) {
@@ -332,12 +336,12 @@ app.get("/view", async (req, res) => {
 
   res.render("index.ejs", {
     viewSection: `
-          <div class="container-fluid" id="viewScreen">
-            <div class="container" id="viewTextContainer">
-                ${viewContentHtml}
-            </div>
-          </div>
-        `
+                    <div class="container-fluid" id="viewScreen">
+                        <div class="container" id="viewTextContainer">
+                            ${viewContentHtml}
+                        </div>
+                    </div>
+                 `
   });
 });
 
@@ -413,7 +417,6 @@ app.get("/review", (req, res) => {
                                 <option value="Portuguese">Portuguese</option>
                                 <option value="Seafood">Seafood</option>
                                 <option value="Spanish">Spanish</option>
-                                <option value="Vegetarian">Vegetarian</option>
                             </select>
                         </div>
 
@@ -461,11 +464,31 @@ async function getEstablishment(neighborhoodId, category) {
             return [];
         }
 
-        let establishmentNames = body.features.map((item) => item.properties.name);
+        const establishments = body.features.map((item) => {
+            const rua = item.properties.street;
+            const numero = item.properties.housenumber;
+            
+            let formattedAddress = "Unknown address";
+
+            if (rua && numero) {
+                formattedAddress = `${rua}, ${numero}`;
+            } else if (rua) {
+                formattedAddress = rua; 
+            } else if (item.properties.address_line1) {
+                formattedAddress = item.properties.address_line1; 
+            }
+
+            return {
+                name: item.properties.name,
+                address: formattedAddress
+            };
+        });
+
+        const validEstablishments = establishments.filter(e => e.name);
+
+        validEstablishments.sort((a, b) => a.name.localeCompare(b.name));
         
-        establishmentNames = [...new Set(establishmentNames)].sort();
-        
-        return establishmentNames;
+        return validEstablishments;
     } catch (err) {
         console.error("Error on calling Geoapify:", err.message || err);
         
