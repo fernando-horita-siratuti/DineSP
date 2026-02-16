@@ -1,5 +1,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
 
+footer {
+    margin-top: auto; 
+    min-height: 34vh; 
+    background-color: #55514b; 
+}
+
 :root {
     --primary: #382f2f;
     --primary-glow: #382f2f;
@@ -96,7 +102,6 @@ footer {
 
 #viewScreen {
     min-height: 55.3vh;
-    /* box-sizing: border-box; */
     padding: 30px;
     background-color: #55514b;
 }
@@ -109,7 +114,6 @@ footer {
 
 #reviewScreen {
     min-height: 55.3vh;
-    /* box-sizing: border-box; */
     padding: 30px;
     background-color: #55514b;
 }

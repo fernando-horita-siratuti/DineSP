@@ -200,89 +200,87 @@ app.get("/view", async (req, res) => {
                                     </div>
                                 </div>
                             `;
-    }
-    else if (neighborhood && cuisine) {
-      const categoriesMap = {
-        'Any': 'catering.restaurant',
-        'African': 'catering.restaurant.african',
-        'Arabic': 'catering.restaurant.arab',
-        'Argentinian': 'catering.restaurant.argentinian',
-        'Bar': 'catering.bar',
-        'Bakery': 'commercial.food_and_drink.bakery', 
-        'Brazilian': 'catering.restaurant.brazilian',
-        'Brazilian Barbecue': 'catering.restaurant.barbecue', 
-        'Burgers': 'catering.restaurant.burger',
-        'Chinese': 'catering.restaurant.chinese',
-        'Coffee Shop': 'catering.cafe.coffee_shop',
-        'French': 'catering.restaurant.french',
-        'German': 'catering.restaurant.german',
-        'Ice Cream Shop': 'catering.ice_cream',
-        'Italian': 'catering.restaurant.italian',
-        'Japanese': 'catering.restaurant.japanese',
-        'Korean': 'catering.restaurant.korean',
-        'Mexican': 'catering.restaurant.mexican',
-        'Peruvian': 'catering.restaurant.peruvian',
-        'Pizza': 'catering.restaurant.pizza',
-        'Portuguese': 'catering.restaurant.portuguese',
-        'Seafood': 'catering.restaurant.seafood',
-        'Spanish': 'catering.restaurant.spanish',
-        'Vegetarian': 'catering.restaurant.vegetarian',
-        'Other': 'catering.restaurant'
-      };
+    } else if (neighborhood && cuisine) {
+        const categoriesMap = {
+            'Any': 'catering.restaurant',
+            'African': 'catering.restaurant.african',
+            'Arabic': 'catering.restaurant.arab',
+            'Argentinian': 'catering.restaurant.argentinian',
+            'Bar': 'catering.bar',
+            'Bakery': 'commercial.food_and_drink.bakery', 
+            'Brazilian': 'catering.restaurant.brazilian',
+            'Brazilian Barbecue': 'catering.restaurant.barbecue', 
+            'Burgers': 'catering.restaurant.burger',
+            'Chinese': 'catering.restaurant.chinese',
+            'Coffee Shop': 'catering.cafe.coffee_shop',
+            'French': 'catering.restaurant.french',
+            'German': 'catering.restaurant.german',
+            'Ice Cream Shop': 'catering.ice_cream',
+            'Italian': 'catering.restaurant.italian',
+            'Japanese': 'catering.restaurant.japanese',
+            'Korean': 'catering.restaurant.korean',
+            'Mexican': 'catering.restaurant.mexican',
+            'Peruvian': 'catering.restaurant.peruvian',
+            'Pizza': 'catering.restaurant.pizza',
+            'Portuguese': 'catering.restaurant.portuguese',
+            'Seafood': 'catering.restaurant.seafood',
+            'Spanish': 'catering.restaurant.spanish',
+            'Vegetarian': 'catering.restaurant.vegetarian',
+            'Other': 'catering.restaurant'
+        };
 
-      const apiCategory = categoriesMap[cuisine] || 'catering.restaurant';
-      let placeId = null;
-      
-      if (neighborhood !== 'Any') {
-          placeId = await getNeighborhoodId(neighborhood);
-      }
-      
-      let listContentHtml = "";
-
-      if (placeId || neighborhood === 'Any') {
-        const places = await getEstablishment(placeId, apiCategory);
+        const apiCategory = categoriesMap[cuisine] || 'catering.restaurant';
+        let placeId = null;
         
-        if (places && places.length > 0) {
-            listContentHtml = `<ul class="list-group">`;
-            places.forEach(restaurantName => {
-                if (restaurantName) {
-                    const encodedNeighborhood = encodeURIComponent(neighborhood);
-                    const encodedCuisine = encodeURIComponent(cuisine);
-                    const encodedRestaurantName = encodeURIComponent(restaurantName);
-
-                    listContentHtml += `
-                                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                                <span class="fw-bold text-start ms-3">${restaurantName}</span>
-                                                <a href="/view?neighborhood=${encodedNeighborhood}&cuisine=${encodedCuisine}&restaurantName=${encodedRestaurantName}" 
-                                                class="text-primary text-decoration-none me-3" 
-                                                style="font-size: 0.9rem; white-space: nowrap; margin-left: 15px;">
-                                                See the reviews <i class="bi bi-arrow-right"></i>
-                                                </a>
-                                            </li>
-                                        `;
-                }
-            });
-            listContentHtml += `</ul>`;
-        } else {
-            listContentHtml = `<p class="text-center mt-4">No places found for ${cuisine} in ${neighborhood}.</p>`;
+        if (neighborhood !== 'Any') {
+            placeId = await getNeighborhoodId(neighborhood);
         }
-      } else {
-         listContentHtml = `<p class="text-center mt-4 text-danger">Location not found.</p>`;
-      }
+        
+        let listContentHtml = "";
 
-      viewContentHtml = `
-                            <div class="mb-5">
-                                <h1 class="fw-bold mb-3 text-center">Restaurants found 🔎</h1>
-                                <div id="apiResultsContainer"> 
-                                    ${listContentHtml} 
-                                </div>
-                            </div> 
-                        `;
+        if (placeId || neighborhood === 'Any') {
+            const places = await getEstablishment(placeId, apiCategory);
+            
+            if (places && places.length > 0) {
+                listContentHtml = `<ul class="list-group">`;
+                places.forEach(restaurantName => {
+                    if (restaurantName) {
+                        const encodedNeighborhood = encodeURIComponent(neighborhood);
+                        const encodedCuisine = encodeURIComponent(cuisine);
+                        const encodedRestaurantName = encodeURIComponent(restaurantName);
+
+                        listContentHtml += `
+                                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                    <span class="fw-bold text-start ms-3">${restaurantName}</span>
+                                                    <a href="/view?neighborhood=${encodedNeighborhood}&cuisine=${encodedCuisine}&restaurantName=${encodedRestaurantName}" 
+                                                    class="text-primary text-decoration-none me-3" 
+                                                    style="font-size: 0.9rem; white-space: nowrap; margin-left: 15px;">
+                                                    See the reviews <i class="bi bi-arrow-right"></i>
+                                                    </a>
+                                                </li>
+                                            `;
+                    }
+                });
+                listContentHtml += `</ul>`;
+            } else {
+                listContentHtml = `<h2 class="text-center mt-4">No places found for ${cuisine} in ${neighborhood}.</h2>`;
+            }
+        } else {
+            listContentHtml = `<p class="text-center mt-4 text-danger">Location not found.</p>`;
+        }
+
+        viewContentHtml = `
+                                <div class="mb-5">
+                                    <h1 class="fw-bold mb-3 text-center">Restaurants found 🔎</h1>
+                                    <div id="apiResultsContainer"> 
+                                        ${listContentHtml} 
+                                    </div>
+                                </div> 
+                            `;
     }
-
   } catch (error) {
-    console.error(error);
-    viewContentHtml = "<p>Error loading data.</p>";
+        console.error(error);
+        viewContentHtml = "<p>Error loading data.</p>";
   }
 
   res.render("index.ejs", {
@@ -417,16 +415,20 @@ async function getEstablishment(neighborhoodId, category) {
         }
 
         let establishmentNames = body.features.map((item) => item.properties.name);
-
+        
         establishmentNames.sort();
         
         return establishmentNames;
     } catch (err) {
         console.error("Error on calling Geoapify:", err.message || err);
-
+        
         return;
     }
 }
+
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
+});
 
 // app.post("/get-secret", async (req, res) => {
 //   const searchId = req.body.id;
@@ -493,7 +495,3 @@ async function getEstablishment(neighborhoodId, category) {
 //     res.render("index.ejs", { content: JSON.stringify(error.response.data) });
 //   }
 // });
-
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-});

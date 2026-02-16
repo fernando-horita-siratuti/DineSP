@@ -79,9 +79,9 @@ function capitalizeRestaurantName(restaurantText) {
 async function verifyRestaurantRegionAndCuisine(restaurantName, neighborhood, cuisine) {
     try {
       const params = new URLSearchParams({
-          restaurantName: restaurantName,
-          neighborhood: neighborhood,
-          cuisine: cuisine
+        restaurantName: restaurantName,
+        neighborhood: neighborhood,
+        cuisine: cuisine
       });
       
       const response = await fetch(`/api/verify-restaurant?${params.toString()}`);
