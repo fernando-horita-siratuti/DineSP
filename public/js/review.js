@@ -25,12 +25,12 @@ function saveToStorage() {
 }
 
 function addUsername(username) {
-  usernamesWrite.push(('Username: ' + username).trim());
+  usernamesWrite.push((username).trim());
   saveToStorage();
 }
 
 function addRestaurantText(restaurantText) {
-  restaurantNameWrite.push(('Restaurant: ' + capitalizeRestaurantName(restaurantText)).trim());
+  restaurantNameWrite.push((capitalizeRestaurantName(restaurantText)).trim());
   saveToStorage();
 }
 
@@ -58,15 +58,15 @@ function addRating(rating) {
   let notaFinal;
   if (notaLimpa.length > 3) {
     if (notaLimpa >= 8) {
-      notaFinal = 'Rating: ' + notaLimpa.slice(0, 3) + '/10 ⭐';
+      notaFinal = notaLimpa.slice(0, 3) + '/10 ⭐';
     } else {
-      notaFinal = 'Rating: ' + notaLimpa.slice(0, 3) + '/10';
+      notaFinal = notaLimpa.slice(0, 3) + '/10';
     }
   } else {
     if (notaLimpa >= 8) {
-      notaFinal = 'Rating: ' + notaLimpa + '/10 ⭐';
+      notaFinal = notaLimpa + '/10 ⭐';
     } else {
-      notaFinal = 'Rating: ' + notaLimpa + '/10';
+      notaFinal = notaLimpa + '/10';
     }
   }
   ratingsWrite.push(notaFinal);
@@ -80,7 +80,7 @@ function addReviewText(reviewText) {
 
 function capitalizeRestaurantName(restaurantText) {
   return restaurantText.toLowerCase().split(' ').map((word) => {
-      return word.charAt(0).toUpperCase() + word.slice(1);
+    return word.charAt(0).toUpperCase() + word.slice(1);
   }).join(' ');
 }
 
@@ -118,8 +118,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const reviewText = document.getElementById("reviewInput").value;
     const isRestaurantValid = await verifyRestaurantRegionAndCuisine(restaurantText, neighborhood, cuisine);
 
-    if (username.length < 1) { 
-      alert("Please enter your username."); 
+    if (username.length < 1 || username.length > 200) { 
+      alert("Please enter a valid username (1-200 characters)."); 
       return; 
     }
     if (restaurantText.length < 1) { 
@@ -142,8 +142,8 @@ document.addEventListener("DOMContentLoaded", () => {
       alert("Please enter a valid rating between 0 and 10."); 
       return; 
     }
-    if (reviewText.length < 1) { 
-      alert("Please enter your review."); 
+    if (reviewText.length < 1 || reviewText.length > 2000) { 
+      alert("Please enter a valid review (1-2000 characters)."); 
       return; 
     }
     if (isRestaurantValid === false) {

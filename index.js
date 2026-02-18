@@ -188,11 +188,12 @@ app.get("/view", async (req, res) => {
   try {
     if (selectedRestaurant) {
         const backLink = `/view?neighborhood=${encodeURIComponent(neighborhood)}&cuisine=${encodeURIComponent(cuisine)}&page=${page}`;
+        const cleanSelectedRestaurant = selectedRestaurant.replace(/[^a-zA-Z0-9]/g, '');
         
         viewContentHtml = `
             <div class="container mt-4">
                 <h1 id="reviewsTitle" class="fw-bold mb-3 text-center" style="color: #382f2f; display: none;">
-                    Community Reviews for "${selectedRestaurant}" 👨‍🍳
+                    Community Reviews for "${cleanSelectedRestaurant}" 👨‍🍳
                 </h1>
                 
                 <div id="postsContainer" class="mt-4"></div>
@@ -424,11 +425,11 @@ app.get("/review", (req, res) => {
                             <label for="priceInput" class="form-label"><h3>Price Range</h3></label>
                             <select class="form-select w-50 mx-auto py-3 fs-5" id="priceInput">
                                 <option value="" selected disabled>Select Price Range</option>
-                                <option value="African">$</option>
-                                <option value="Arabic">$$</option>
-                                <option value="Argentinian">$$$</option>
-                                <option value="Bar">$$$$</option>
-                                <option value="Bakery">$$$$$</option>
+                                <option value="$">$</option>
+                                <option value="$$">$$</option>
+                                <option value="$$$">$$$</option>
+                                <option value="$$$$">$$$$</option>
+                                <option value="$$$$$">$$$$$</option>
                             </select>
                         </div>
 
@@ -477,15 +478,15 @@ async function getEstablishment(neighborhoodId, category) {
         }
 
         const establishments = body.features.map((item) => {
-            const rua = item.properties.street;
-            const numero = item.properties.housenumber;
+            const street = item.properties.street;
+            const houseNumber = item.properties.housenumber;
             
             let formattedAddress = "Unknown address";
 
-            if (rua && numero) {
-                formattedAddress = `${rua}, ${numero}`;
-            } else if (rua) {
-                formattedAddress = rua; 
+            if (street && houseNumber) {
+                formattedAddress = `${street}, ${houseNumber}`;
+            } else if (street) {
+                formattedAddress = street; 
             } else if (item.properties.address_line1) {
                 formattedAddress = item.properties.address_line1; 
             }
