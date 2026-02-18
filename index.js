@@ -50,8 +50,8 @@ app.get("/api/verify-restaurant", async (req, res) => {
         const establishments = await getEstablishment(placeId, apiCategory);
         const userInput = restaurantName.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
         
-        const exists = establishments.some(name => {
-            const apiName = name.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        const exists = establishments.some(place => {
+            const apiName = place.name.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
             return apiName === userInput; 
         });
 
@@ -417,6 +417,18 @@ app.get("/review", (req, res) => {
                                 <option value="Portuguese">Portuguese</option>
                                 <option value="Seafood">Seafood</option>
                                 <option value="Spanish">Spanish</option>
+                            </select>
+                        </div>
+
+                        <div class="text-center mb-3">
+                            <label for="priceInput" class="form-label"><h3>Price Range</h3></label>
+                            <select class="form-select w-50 mx-auto py-3 fs-5" id="priceInput">
+                                <option value="" selected disabled>Select Price Range</option>
+                                <option value="African">$</option>
+                                <option value="Arabic">$$</option>
+                                <option value="Argentinian">$$$</option>
+                                <option value="Bar">$$$$</option>
+                                <option value="Bakery">$$$$$</option>
                             </select>
                         </div>
 
