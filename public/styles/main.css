@@ -204,7 +204,6 @@ h1, h2, h3, h4, h5, h6, .hero-title, .navbar-brand {
     font-family: 'Poppins', sans-serif;
     font-weight: 500;
     font-size: 1.5rem;
-    color: #495057;
     text-align: center;
     
     background-color: #f2ebd9;
@@ -303,6 +302,20 @@ h1, h2, h3, h4, h5, h6, .hero-title, .navbar-brand {
 .custom-dropdown-display:hover {
     box-shadow: 0 4px 12px rgba(0,0,0,0.05);
     border-color: #382f2f;
+}
+
+.btn-primary {
+    background-color: #382f2f !important;
+    border-color: #382f2f !important;
+    color: #ffffff !important;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover, 
+.btn-primary:focus {
+    background-color: #bbae87 !important; 
+    border-color: #bbae87 !important;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 @media (max-width: 768px) {
