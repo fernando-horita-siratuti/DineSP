@@ -5,7 +5,7 @@
     "ejs": "^3.1.9",
     "express": "^4.18.2",
     "node-fetch": "^3.3.2",
-    "nodemon": "^3.1.11"
+    "nodemon": "^3.1.14"
   },
   "name": "5.5-rest-apis",
   "version": "1.0.0",

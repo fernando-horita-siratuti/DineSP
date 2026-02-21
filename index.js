@@ -249,148 +249,180 @@ app.get("/view", async (req, res) => {
             const allEstablishments = await getEstablishment(placeId, apiCategory);
             
             if (allEstablishments && allEstablishments.length > 0) {
-                const totalResults = allEstablishments.length;
-                const totalPages = Math.ceil(totalResults / itemsPerPage);
-                const startIndex = (page - 1) * itemsPerPage;
-                const endIndex = startIndex + itemsPerPage;
-                const paginatedEstablishments = allEstablishments.slice(startIndex, endIndex);
-
-                listContentHtml = `<ul class="list-group">`;
-                paginatedEstablishments.forEach(establishment => {
-                    const restaurantName = "­­­­­ ­" + establishment.name;  // Invisible characters to align the restaurant name with the address
-                    const restaurantAddress = establishment.address || "Address not available";
-                        
-                    if (restaurantName) {
-                        const encodedNeighborhood = encodeURIComponent(neighborhood);
-                        const encodedCuisine = encodeURIComponent(cuisine);
-                        const encodedRestaurantName = encodeURIComponent(restaurantName);
-
-                        listContentHtml += `
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                <div class="ms-3 text-start">
-                                    <span class="fw-bold d-block fs-5">
-                                        ${restaurantName}
-                                        <span class="restaurant-stats fs-5 fw-bold" data-restaurant-name="${establishment.name}">
-                                            <span class="text-muted" style="font-size: 1.2rem;">| ⭐ Unrated | 💵 Unrated</span>
-                                        </span>
-                                    </span>
-                                    <span class="text-muted fw-bold" style="font-size: 0.85rem;">
-                                        📍 ${restaurantAddress}
-                                    </span>
-                                </div>
-                                <a href="/view?neighborhood=${encodedNeighborhood}&cuisine=${encodedCuisine}&restaurantName=${encodedRestaurantName}&page=${page}" 
-                                class="text-primary text-decoration-none me-3" 
-                                style="font-size: 0.9rem; white-space: nowrap; margin-left: 15px;">
-                                See the reviews <i class="bi bi-arrow-right"></i>
-                                </a>
-                            </li>
-                        `;
-                    }
-                });
-                listContentHtml += `</ul>`;
-
-                listContentHtml += `<script>
-                    setTimeout(() => {
-                        const restTexts = JSON.parse(localStorage.getItem('restaurantTexts') || '[]');
-                        const ratings = JSON.parse(localStorage.getItem('ratings') || '[]');
-                        const prices = JSON.parse(localStorage.getItem('prices') || '[]');
-                        const stats = {};
-                        
-                        const extractRate = (str) => {
-                            if (!str) {
-                                return NaN;
-                            }
-                            const match = str.toString().replace(',', '.').match(/\\d+(\\.\\d+)?/);
-                            return match ? parseFloat(match[0]) : NaN;
-                        };
-
-                        const extractPrice = (str) => {
-                            if (!str) {
-                                return NaN;
-                            }
-                            const text = str.toString().replace(',', '.');
-
-                            const dollars = text.match(/\\$/g);
-                            if (dollars) {
-                                return dollars.length;
-                            }
-                            
-                            return NaN;
-                        };
-
-                        for(let i = 0; i < restTexts.length; i++) {
-                            if(!restTexts[i]) continue;
-                            
-                            const rawName = restTexts[i].replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
-                            
-                            if (!stats[rawName]) {
-                                stats[rawName] = { sumRate: 0, countRate: 0, sumPrice: 0, countPrice: 0 };
-                            }
-                            
-                            const numRate = extractRate(ratings[i]);
-                            const numPrice = extractPrice(prices[i]);
-                            
-                            if (!isNaN(numRate)) { 
-                                stats[rawName].sumRate += numRate; 
-                                stats[rawName].countRate++; 
-                            }
-                            if (!isNaN(numPrice)) { 
-                                stats[rawName].sumPrice += numPrice; 
-                                stats[rawName].countPrice++; 
-                            }
-                        }
-
-                        document.querySelectorAll('.restaurant-stats').forEach(span => {
-                            const originalName = span.getAttribute('data-restaurant-name') || '';
-                            const cleanName = originalName.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
-                            const data = stats[cleanName];
-                            
-                            let txtRate = 'Unrated';
-                            let txtPrice = 'Unrated';
-
-                            if (data) {
-                                if (data.countRate > 0) {
-                                    txtRate = (data.sumRate / data.countRate).toFixed(1).replace('.', ',');
-                                }
-                                if (data.countPrice > 0) {
-                                    txtPrice = (data.sumPrice / data.countPrice).toFixed(1).replace('.', ',');
-                                }
-                            }
-
-                            span.innerHTML = '<span class="text-muted" style="font-size: 1.1rem;"> | ⭐ ' + txtRate + ' | 💵 ' + txtPrice + '</span>';
-                        });
-                    }, 100);
-                </script>`;
-
                 const encodedNeighborhood = encodeURIComponent(neighborhood);
                 const encodedCuisine = encodeURIComponent(cuisine);
-                
-                let paginationHtml = `<div class="d-flex justify-content-center align-items-end gap-4 mt-5">`;
+                const currentSort = req.query.sort || 'alpha';
 
-                for (let i = 1; i <= totalPages; i++) {
-                    const isActive = (i === page);
-                    const color = isActive ? '#382f2f' : '#d4c598'; 
-                    const transform = isActive ? 'scale(1.3)' : 'scale(1)';
-                    const opacity = isActive ? '1' : '0.6'; 
+                listContentHtml = `
+                                    <div id="dynamicListContainer"></div>
+                                    <div id="dynamicPaginationContainer"></div>
 
-                    const pageLink = `/view?neighborhood=${encodedNeighborhood}&cuisine=${encodedCuisine}&page=${i}`;
+                                    <script>
+                                        const allPlaces = ${JSON.stringify(allEstablishments)};
+                                        const currentPage = ${page};
+                                        const itemsPerPage = ${itemsPerPage};
+                                        const neighborhood = "${encodedNeighborhood}";
+                                        const cuisine = "${encodedCuisine}";
+                                        const currentSort = "${currentSort}";
+                                        const restTexts = JSON.parse(localStorage.getItem('restaurantTexts') || '[]');
+                                        const ratings = JSON.parse(localStorage.getItem('ratings') || '[]');
+                                        const prices = JSON.parse(localStorage.getItem('prices') || '[]');
+                                        const stats = {};
+                                        
+                                        const extractRate = (str) => {
+                                            if (!str) {
+                                                return NaN;
+                                            }
+                                            const match = str.toString().replace(',', '.').match(/\\d+(\\.\\d+)?/);
+                                            return match ? parseFloat(match[0]) : NaN;
+                                        };
 
-                    paginationHtml +=   `
-                                            <a href="${pageLink}" class="text-decoration-none d-flex flex-column align-items-center" 
-                                            style="transition: all 0.3s ease; transform: ${transform}; opacity: ${opacity};">
-                                                
-                                                <img src="/images/chefHat.png" alt="Page ${i}" width="45" height="45">
+                                        const extractPrice = (str) => {
+                                            const text = str.toString().replace(',', '.');
+                                            const dollars = text.match(/\\$/g);
+                                            if (dollars) {
+                                                return dollars.length;
+                                            }
+                                            return NaN;
+                                        };
 
-                                                <span class="fw-bold mt-2" style="color: ${color}; font-family: 'Poppins', sans-serif; font-size: 0.9rem;">
-                                                    ${i}
-                                                </span>
-                                            </a>
-                                        `;
-                }
+                                        for(let i = 0; i < restTexts.length; i++) {
+                                            if(!restTexts[i]) continue;
+                                            const rawName = restTexts[i].replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+                                            if (!stats[rawName]) {
+                                                stats[rawName] = { sumRate: 0, countRate: 0, sumPrice: 0, countPrice: 0 };
+                                            }
+                                            const numRate = extractRate(ratings[i]);
+                                            const numPrice = extractPrice(prices[i]);
+                                            
+                                            if (!isNaN(numRate)) { 
+                                                stats[rawName].sumRate += numRate; stats[rawName].countRate++; 
+                                            }
+                                            if (!isNaN(numPrice)) { 
+                                                stats[rawName].sumPrice += numPrice; stats[rawName].countPrice++; 
+                                            }
+                                        }
 
-                paginationHtml += `</div>`;
-                
-                listContentHtml += paginationHtml;
+                                        allPlaces.forEach(place => {
+                                            place.displayName = "­­­­­ ­" + place.name; // Invisible chars to align the restaurant name with the address
+                                            const cleanName = place.name.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+                                            const data = stats[cleanName];
+                                            
+                                            place.avgRate = -1;
+                                            place.avgPrice = -1;
+                                            place.txtRate = 'Unrated';
+                                            place.txtPrice = 'Unrated';
+                                            
+                                            if (data) {
+                                                if (data.countRate > 0) {
+                                                    place.avgRate = data.sumRate / data.countRate;
+                                                    place.txtRate = place.avgRate.toFixed(1).replace('.', ',') + '/10';
+                                                }
+                                                if (data.countPrice > 0) {
+                                                    place.avgPrice = data.sumPrice / data.countPrice;
+                                                    place.txtPrice = place.avgPrice.toFixed(1).replace('.', ',') + '/5';
+                                                }
+                                            }
+                                        });
+
+                                        allPlaces.sort((a, b) => {
+                                            if (currentSort === 'rating_desc') {
+                                                if (a.avgRate === -1 && b.avgRate !== -1) {
+                                                    return 1;
+                                                }
+                                                if (b.avgRate === -1 && a.avgRate !== -1) {
+                                                    return -1;
+                                                }
+                                                return b.avgRate - a.avgRate;
+                                            } else if (currentSort === 'price_asc') {
+                                                if (a.avgPrice === -1 && b.avgPrice !== -1) {
+                                                return 1;
+                                                }
+                                                if (b.avgPrice === -1 && a.avgPrice !== -1) {
+                                                    return -1;
+                                                }
+                                                return a.avgPrice - b.avgPrice;
+                                            } else if (currentSort === 'price_desc') {
+                                                if (a.avgPrice === -1 && b.avgPrice !== -1) {
+                                                    return 1;
+                                                }
+                                                if (b.avgPrice === -1 && a.avgPrice !== -1) {
+                                                    return -1;
+                                                }
+                                                return b.avgPrice - a.avgPrice;
+                                            } else {
+                                                return a.name.localeCompare(b.name);
+                                            }
+                                        });
+
+                                        const totalPages = Math.ceil(allPlaces.length / itemsPerPage);
+                                        let validPage = currentPage > totalPages && totalPages > 0 ? totalPages : currentPage;
+                                        
+                                        const startIndex = (validPage - 1) * itemsPerPage;
+                                        const endIndex = startIndex + itemsPerPage;
+                                        const paginatedPlaces = allPlaces.slice(startIndex, endIndex);
+
+                                        let ulHtml = '<ul class="list-group">';
+                                        paginatedPlaces.forEach(place => {
+                                            const encodedRestName = encodeURIComponent(place.displayName);
+                                            const address = place.address || "Address not available";
+                                            
+                                            ulHtml += \`
+                                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                    <div class="ms-3 text-start">
+                                                        <span class="fw-bold d-block fs-5">
+                                                            \${place.displayName}
+                                                            <span class="restaurant-stats fw-bold ms-2">
+                                                                <span class="text-muted" style="font-size: 1.1rem;"> | ⭐ \${place.txtRate} | 💵 \${place.txtPrice}</span>
+                                                            </span>
+                                                        </span>
+                                                        <span class="text-muted fw-bold" style="font-size: 0.85rem;">
+                                                            📍 \${address}
+                                                        </span>
+                                                    </div>
+                                                    <a href="/view?neighborhood=\${neighborhood}&cuisine=\${cuisine}&restaurantName=\${encodedRestName}&page=\${validPage}&sort=\${currentSort}" 
+                                                    class="text-primary text-decoration-none me-3" 
+                                                    style="font-size: 0.9rem; white-space: nowrap; margin-left: 15px;">
+                                                    See the reviews <i class="bi bi-arrow-right"></i>
+                                                    </a>
+                                                </li>
+                                            \`;
+                                        });
+                                        ulHtml += '</ul>';
+                                        document.getElementById('dynamicListContainer').innerHTML = ulHtml;
+
+                                        let pagHtml = '<div class="d-flex justify-content-center align-items-end gap-4 mt-5">';
+                                        for (let i = 1; i <= totalPages; i++) {
+                                            const isActive = (i === validPage);
+                                            const color = isActive ? '#382f2f' : '#d4c598'; 
+                                            const transform = isActive ? 'scale(1.3)' : 'scale(1)';
+                                            const opacity = isActive ? '1' : '0.6'; 
+                                            
+                                            const pageLink = \`/view?neighborhood=\${neighborhood}&cuisine=\${cuisine}&page=\${i}&sort=\${currentSort}\`;
+                                            
+                                            pagHtml += \`
+                                                <a href="\${pageLink}" class="text-decoration-none d-flex flex-column align-items-center" 
+                                                style="transition: all 0.3s ease; transform: \${transform}; opacity: \${opacity};">
+                                                    <img src="/images/chefHat.png" alt="Page \${i}" width="45" height="45">
+                                                    <span class="fw-bold mt-2" style="color: \${color}; font-family: 'Poppins', sans-serif; font-size: 0.9rem;">
+                                                        \${i}
+                                                    </span>
+                                                </a>
+                                            \`;
+                                        }
+                                        pagHtml += '</div>';
+                                        document.getElementById('dynamicPaginationContainer').innerHTML = pagHtml;
+
+                                        const dropdown = document.getElementById('sortDropdown');
+                                        if (dropdown) {
+                                            dropdown.value = currentSort; 
+                                            dropdown.addEventListener('change', (e) => {
+                                                const newSort = e.target.value;
+                                                window.location.href = \`/view?neighborhood=\${neighborhood}&cuisine=\${cuisine}&page=1&sort=\${newSort}\`;
+                                            });
+                                        }
+                                    </script>
+                                `;
 
             } else {
                 listContentHtml = `<p class="text-center mt-4">No places found for ${cuisine} in ${neighborhood}.</p>`;
@@ -399,16 +431,25 @@ app.get("/view", async (req, res) => {
             listContentHtml = `<p class="text-center mt-4 text-danger">Location not found.</p>`;
         }
 
-        viewContentHtml =   `
-                                <div class="mb-5">
-                                    <h1 class="fw-bold mb-5 text-center">Restaurants found 🔎</h1>
-                                    <div id="apiResultsContainer"> 
-                                        ${listContentHtml} 
-                                    </div>
+        viewContentHtml = `
+                            <div class="mb-5">
+                                <div class="d-flex justify-content-center align-items-center position-relative mb-5">
+                                    <h1 class="fw-bold mb-0 text-center">Restaurants found 🔎</h1>
+                                    
+                                    <select id="sortDropdown" class="form-select shadow-sm position-absolute end-0" style="width: auto; border-radius: 8px; border-color: #d4c598; color: #382f2f; font-weight: 500; cursor: pointer;">
+                                        <option value="alpha">A-Z (Default)</option>
+                                        <option value="rating_desc">Highest Rated</option>
+                                        <option value="price_asc">Lowest Price</option>
+                                        <option value="price_desc">Highest Price</option>
+                                    </select>
                                 </div>
-                            `;
-    }
 
+                                <div id="apiResultsContainer"> 
+                                    ${listContentHtml} 
+                                </div>
+                            </div>
+                        `;
+    }
   } catch (error) {
     console.error(error);
     viewContentHtml = "<p>Error loading data.</p>";
