@@ -104,50 +104,79 @@ async function verifyRestaurantRegionAndCuisine(restaurantName, neighborhood, cu
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  const button = document.querySelector("button.btn-primary.w-25");
+  const button = document.querySelector("button.btn.btn-primary.px-5.py-2.fs-4.fw-bold.shadow-sm");
 
   button.addEventListener("click", async (e) => {
     e.preventDefault(); 
 
-    const username = document.getElementById("usernameInput").value;
-    const restaurantText = document.getElementById("restaurantInput").value;
-    const neighborhood = document.getElementById("neighborhoodInput").value; 
-    const cuisine = document.getElementById("cuisineInput").value;
-    const price = document.getElementById("priceInput").value; 
-    const rating = document.getElementById("ratingInput").value; 
-    const reviewText = document.getElementById("reviewInput").value;
-    const isRestaurantValid = await verifyRestaurantRegionAndCuisine(restaurantText, neighborhood, cuisine);
+    const userElement = document.getElementById("usernameInput");
+    const restElement = document.getElementById("restaurantInput");
+    const ratingElement = document.getElementById("ratingInput");
+    const reviewElement = document.getElementById("reviewInput");
+
+    const neighHidden = document.getElementById("neighborhoodInput");
+    const neighBtn = neighHidden.closest('.dropdown').querySelector('.dropdown-toggle');
+    
+    const cuisineHidden = document.getElementById("cuisineInput");
+    const cuisineBtn = cuisineHidden.closest('.dropdown').querySelector('.dropdown-toggle');
+    
+    const priceHidden = document.getElementById("priceInput");
+    const priceBtn = priceHidden.closest('.dropdown').querySelector('.dropdown-toggle');
+
+    const allElements = [userElement, restElement, neighBtn, cuisineBtn, priceBtn, ratingElement, reviewElement];
+    allElements.forEach(el => el.classList.remove('border', 'border-danger', 'border-2'));
+
+    const username = userElement.value;
+    const restaurantText = restElement.value;
+    const neighborhood = neighHidden.value; 
+    const cuisine = cuisineHidden.value;
+    const price = priceHidden.value; 
+    const rating = ratingElement.value; 
+    const reviewText = reviewElement.value;
 
     if (username.length < 1 || username.length > 200) { 
       alert("Please enter a valid username (1-200 characters)."); 
+      userElement.classList.add('border', 'border-danger', 'border-2');
       return; 
     }
     if (restaurantText.length < 1) { 
       alert("Please enter the name of the restaurant."); 
+      restElement.classList.add('border', 'border-danger', 'border-2');
       return; 
     }
     if (neighborhood === "") { 
       alert("Please select a neighborhood."); 
+      neighBtn.classList.add('border', 'border-danger', 'border-2');
       return;
     } 
     if (cuisine === "") { 
       alert("Please select a cuisine."); 
+      cuisineBtn.classList.add('border', 'border-danger', 'border-2');
       return; 
     }
     if (price === "") {
       alert("Please select a price range.");
+      priceBtn.classList.add('border', 'border-danger', 'border-2');
       return;
     }
     if (rating.length < 1 || parseInt(rating) < 0 || parseInt(rating) > 10) { 
       alert("Please enter a valid rating between 0 and 10."); 
+      ratingElement.classList.add('border', 'border-danger', 'border-2');
       return; 
     }
     if (reviewText.length < 1 || reviewText.length > 2000) { 
       alert("Please enter a valid review (1-2000 characters)."); 
+      reviewElement.classList.add('border', 'border-danger', 'border-2');
       return; 
     }
+
+    const isRestaurantValid = await verifyRestaurantRegionAndCuisine(restaurantText, neighborhood, cuisine);
+
     if (isRestaurantValid === false) {
       alert("The restaurant does not exist in the selected neighborhood and cuisine.");
+      restElement.classList.add('border', 'border-danger', 'border-2');
+      neighBtn.classList.add('border', 'border-danger', 'border-2');
+      cuisineBtn.classList.add('border', 'border-danger', 'border-2');
       return;
     }
 
@@ -159,14 +188,33 @@ document.addEventListener("DOMContentLoaded", () => {
     addRating(rating); 
     addReviewText(reviewText);
     
-    document.getElementById("usernameInput").value = "";
-    document.getElementById("restaurantInput").value = "";
-    document.getElementById("neighborhoodInput").value = ""; 
-    document.getElementById("cuisineInput").value = "";
-    document.getElementById("priceInput").value = ""; 
-    document.getElementById("ratingInput").value = ""; 
-    document.getElementById("reviewInput").value = "";
+    userElement.value = "";
+    restElement.value = "";
+    ratingElement.value = "";
+    reviewElement.value = "";
+    
+    neighHidden.value = ""; 
+    neighHidden.closest('.dropdown').querySelector('.dropdown-text').innerText = "Select";
+    
+    cuisineHidden.value = "";
+    cuisineHidden.closest('.dropdown').querySelector('.dropdown-text').innerText = "Select";
+    
+    priceHidden.value = ""; 
+    priceHidden.closest('.dropdown').querySelector('.dropdown-text').innerText = "Select";
 
     alert("Your review was successfully posted!");
+  });
+
+  document.querySelectorAll('.elegant-input').forEach(input => {
+    input.addEventListener('input', function() {
+      this.classList.remove('border', 'border-danger', 'border-2');
+    });
+  });
+
+  document.querySelectorAll('#reviewScreen .dropdown-item').forEach(item => {
+    item.addEventListener('click', function() {
+      const dropdownBtn = this.closest('.dropdown').querySelector('.dropdown-toggle');
+      dropdownBtn.classList.remove('border', 'border-danger', 'border-2');
+    });
   });
 });

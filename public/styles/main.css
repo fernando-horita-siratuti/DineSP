@@ -318,6 +318,34 @@ h1, h2, h3, h4, h5, h6, .hero-title, .navbar-brand {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
+.review-label {
+    color: #d4c598;
+    font-size: 1.1rem;
+    margin-bottom: 0.4rem;
+}
+
+.elegant-input {
+    background-color: #ffffff !important; 
+    border: 1px solid #d4c598 !important; 
+    border-radius: 8px !important;
+    color: #382f2f !important; 
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500;
+    
+    padding: 10px 16px !important; 
+    
+    transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.elegant-input:focus,
+.elegant-input[aria-expanded="true"] {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05) !important;
+    border-color: #382f2f !important;
+    background-color: #ffffff !important;
+    color: #382f2f !important;
+    outline: none;
+}
+
 @media (max-width: 768px) {
     .hero-title {
         font-size: 2.5rem;
