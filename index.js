@@ -40,8 +40,7 @@ app.get("/api/verify-restaurant", async (req, res) => {
             'Pizza': 'catering.restaurant.pizza',
             'Portuguese': 'catering.restaurant.portuguese',
             'Seafood': 'catering.restaurant.seafood',
-            'Spanish': 'catering.restaurant.spanish',
-            'Other': 'catering.restaurant'
+            'Spanish': 'catering.restaurant.spanish'
         };
         
         const apiCategory = categoriesMap[cuisine];
@@ -230,7 +229,6 @@ app.get("/view", async (req, res) => {
                 'Portuguese': 'catering.restaurant.portuguese',
                 'Seafood': 'catering.restaurant.seafood',
                 'Spanish': 'catering.restaurant.spanish',
-                'Other': 'catering.restaurant'
             };
 
             const apiCategory = categoriesMap[cuisine];
