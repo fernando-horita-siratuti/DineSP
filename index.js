@@ -76,8 +76,8 @@ app.get("/", (req, res) => {
                                             <label for="neighborhoodSelect" class="form-label">Neighborhoods</label>
                                             <div class="dropdown">
                                                 <button class="btn dropdown-search dropdown-toggle w-100 text-start" type="button" 
-                                                        id="neighborhoodSelect" data-bs-toggle="dropdown" aria-expanded="false">
-                                                    Choose a neighborhood
+                                                    id="neighborhoodSelect" data-bs-toggle="dropdown" aria-expanded="false">
+                                                    Select a neighborhood
                                                 </button>
                                                 <ul class="dropdown-menu w-100" style="max-height: 300px; overflow-y: auto;">
                                                     <li><input type="text" class="form-control mx-2 mb-2" id="searchNeighborhood" 
@@ -176,7 +176,7 @@ app.get("/view", async (req, res) => {
     let viewContentHtml = `
                                 <div class="d-flex justify-content-center align-items-center" style="min-height: 60vh;">
                                     <h1 class="text-center fw-bold" 
-                                        style="color: #382f2f; font-family: 'Poppins', sans-serif;">
+                                        style="color: #382f2f">
                                         Please, select a neighborhood and a cuisine on the home page.
                                     </h1>
                                 </div>
@@ -401,7 +401,7 @@ app.get("/view", async (req, res) => {
                                                     <a href="\${pageLink}" class="text-decoration-none d-flex flex-column align-items-center" 
                                                     style="transition: all 0.3s ease; transform: \${transform}; opacity: \${opacity};">
                                                         <img src="/images/chefHat.png" alt="Page \${i}" width="45" height="45">
-                                                        <span class="fw-bold mt-2" style="color: \${color}; font-family: 'Poppins', sans-serif; font-size: 0.9rem;">
+                                                        <span class="fw-bold mt-2" style="color: \${color}; font-size: 0.9rem;">
                                                             \${i}
                                                         </span>
                                                     </a>
@@ -557,7 +557,7 @@ app.get("/review", (req, res) => {
                                     <div class="dropdown w-100">
                                         <input type="hidden" id="cuisineInput" value="">
                                         <button class="btn elegant-input dropdown-toggle w-100 d-flex justify-content-between align-items-center" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <span class="dropdown-text">Choose a cuisine</span>
+                                        <span class="dropdown-text">Select a cuisine</span>
                                         </button>
                                         <ul class="dropdown-menu w-100" style="max-height: 250px; overflow-y: auto;">
                                         <li><a class="dropdown-item" href="#" data-value="African">African</a></li>
