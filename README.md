@@ -51,7 +51,7 @@ Here are some screenshots of the main user flow:
 | :---: | :---: |
 | <img src="/public/images/home.png" width="400" alt="Home Desktop"> | <img src="/public/images/restaurantCards.png" width="400" alt="Rstaurant Cards Desktop"> |
 | **Reading a Review** | **Posting a Review** |
-| <img src="/public/images/reviewCards.png" width="400" alt="Review Cards Desktop"> | <img src="/public/images/review.png" width="400" alt="Review Desktop"> |
+| <img src="/public/images/reviewCard.png" width="400" alt="Review Card Desktop"> | <img src="/public/images/review.png" width="400" alt="Review Desktop"> |
 
 ## Requirements
 
@@ -114,25 +114,27 @@ This project utilizes a hybrid data approach:
 ## Project Structure
 
 ```text
-DineSP/
-├── node_modules/           # Ignored by git (generated via npm install)
-├── public/                 # Static assets
-│   ├── css/
-│   │   └── style.css       # Custom stylesheets (Mobile-first)
-│   └── images/             # Backgrounds, Chef Hat pagination icons, etc.
-|        └── chefHat.png
-|        └── logo.png
-|        └── restaurant.png
-├── views/                  # EJS Templates
-|   | └── partials
-|   |       └── footer.ejs
-|   |       └── header.ejs
-│   └── index.ejs           # Main dynamic view 
-├── index.js                # Express server and routing logic
-├── LICENSE                 # MIT License
-├── package.json            # Project metadata and dependencies
-├── package-lock.json       # Dependency version lock
-└── README.md               # This file
+public/                 # Static assets
+├── css/
+│   └── style.css       # Custom stylesheets (Mobile-first)
+└── images/             # Backgrounds, Chef Hat pagination icons, etc.
+    └── chefHat.png
+    └── home.png
+    └── logo.png
+    └── restaurant.png
+    └── restaurantCards.png
+    └── review.png
+    └── reviewCard.png
+views/                  # EJS Templates
+| └── partials
+|      └── footer.ejs
+|      └── header.ejs
+└── index.ejs           # Main dynamic view 
+index.js                # Express server and routing logic
+LICENSE                 # MIT License
+package.json            # Project metadata and dependencies
+package-lock.json       # Dependency version lock
+README.md               # This file
 ```
 
 ## Technical Details
