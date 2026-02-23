@@ -84,7 +84,13 @@ function updateUI() {
     const htmlContent = `
                           <h3 class="card-title fw-bold" style="color: #382f2f;">Username: ${user}</h3>
                           <h5 class="card-subtitle mb-1 fw-bold" style="color: #382f2f;">Restaurant: ${rest}</h5>
-                          <p class="text-muted mb-2 fs-6" style="font-size: 0.9rem;">📍 ${neigh} &nbsp; | &nbsp; 🍽️ ${cuis} &nbsp; | &nbsp; 💵 ${price} &nbsp; | &nbsp; 📅 ${date}</p>
+                          <p class="text-muted mb-2 fs-6" style="font-size: 0.9rem;">
+                            <span class="d-block d-md-inline">📍 ${neigh} &nbsp; | &nbsp; 🍽️ ${cuis}</span>
+                            
+                            <span class="d-none d-md-inline"> &nbsp; | &nbsp; </span>
+                            
+                            <span class="d-block d-md-inline mt-1 mt-md-0">💵 ${price} &nbsp; | &nbsp; 📅 ${date}</span>
+                          </p>
                           <h5 class="card-subtitle mb-2 fw-bold" style="color: #382f2f;">Rating: ${rate}</h5>
                           <p class="card-text mt-3" style="white-space: pre-wrap;">${review}</p>
                         `;
