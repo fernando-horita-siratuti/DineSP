@@ -76,7 +76,19 @@ Install all required Node.js packages (Express, EJS, etc.):
 npm i
 ```
 
-### 3. Run the Application
+### 3. Configure Environment Variables
+
+This project uses the Geoapify API to fetch restaurant data. You will need a free API key to run it locally.
+
+1. Get a free API key at [Geoapify](https://www.geoapify.com/).
+2. Create a file named `.env` in the root directory of the project.
+3. Add your API key to the `.env` file like this:
+
+```env
+GEOAPIFY_API_KEY=your_api_key_here
+```
+
+### 4. Run the Application
 
 Start the local server:
 
@@ -85,7 +97,7 @@ node index.js
 ```
 *Note: Alternatively, you can use `npm start` if configured in your package.json or use `nodemon index.js` if you have nodemon installed.*
 
-### 4. Access the Platform
+### 5. Access the Platform
 
 Open your web browser and navigate to:
 ```text
