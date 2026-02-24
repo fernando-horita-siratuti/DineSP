@@ -186,6 +186,7 @@ All restaurant data is fetched dynamically from a free public [API](https://apid
 - Missing street numbers in some restaurant addresses.
 - Incorrect address locations.
 - Misspelled or incorrectly formatted restaurant names.
+- Incomplete database coverage, meaning some restaurants might not be retrievable by the API.
 
 ## <a id="future-improvements"></a>🗺️ Future Improvements
 
