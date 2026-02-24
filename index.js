@@ -82,7 +82,7 @@ app.get("/", (req, res) => {
                                                 </button>
                                                 <ul class="dropdown-menu w-100" style="max-height: 300px; overflow-y: auto;">
                                                     <li><input type="text" class="form-control mx-2 mb-2" id="searchNeighborhood" 
-                                                            placeholder="Search neighborhood..." style="width: calc(100% - 1rem);"></li>
+                                                        placeholder="Search neighborhood..." style="width: calc(100% - 1rem);"></li>
                                                     <li><hr class="dropdown-divider"></li>
                                                     <div id="neighborhoodList">
                                                         <li><a class="dropdown-item" href="" data-value="Any">Any</a></li>
@@ -118,7 +118,7 @@ app.get("/", (req, res) => {
                                             <label for="cuisineSelect" class="form-label">Cuisines</label>
                                             <div class="dropdown">
                                                 <button class="btn dropdown-search dropdown-toggle w-100 text-start" type="button" 
-                                                        id="cuisineSelect" data-bs-toggle="dropdown" aria-expanded="false">
+                                                    id="cuisineSelect" data-bs-toggle="dropdown" aria-expanded="false">
                                                     Select the cuisine
                                                 </button>
                                                 <ul class="dropdown-menu w-100" style="max-height: 300px; overflow-y: auto;">

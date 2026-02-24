@@ -98,8 +98,7 @@ h1, h2, h3, h4, h5, h6, .hero-title, .navbar-brand {
 .dropdown-search:hover, 
 .dropdown-search:focus,
 .dropdown-search[aria-expanded="true"] {
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-    border-color: #382f2f;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
 }
 
 .dropdown-menu {
