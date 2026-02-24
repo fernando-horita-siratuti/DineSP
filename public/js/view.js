@@ -83,21 +83,22 @@ function updateUI() {
     
     const htmlContent = `
                           <div class="card shadow-sm border-0 mb-4 mx-auto" style="border-radius: 16px; background-color: #ffffff; max-width: 800px; width: 100%;">
-                            <div class="card-body p-4">
-                              <div class="d-flex justify-content-between align-items-start mb-3 gap-3">
-                                <div class="d-flex align-items-center">
-                                  <div class="rounded-circle d-flex justify-content-center align-items-center me-3 shadow-sm flex-shrink-0" style="width: 50px; height: 50px; background-color: #bbae87; color: white;">
-                                    <i class="bi bi-person-fill fs-3"></i>
+                            <div class="card-body p-3 p-md-4">
+                              <div class="d-flex justify-content-between align-items-start mb-3 gap-2 gap-md-3">
+                                  <div class="d-flex align-items-center flex-grow-1" style="min-width: 0;">
+                                    <div class="rounded-circle d-flex justify-content-center align-items-center me-2 me-md-3 shadow-sm flex-shrink-0" style="width: 50px; height: 50px; background-color: #bbae87; color: white;">
+                                      <i class="bi bi-person-fill fs-3"></i>
+                                    </div>
+                                    
+                                    <div class="text-start text-truncate">
+                                      <h4 class="card-title fw-bold mb-0 text-truncate" style="color: #382f2f;">${user}</h4>
+                                    </div>
                                   </div>
-                                  <div class="text-start" style="word-break: break-word;">
-                                    <h4 class="card-title fw-bold mb-0" style="color: #382f2f;">${user}</h4>
+                                  
+                                  <div class="rounded shadow-sm d-flex flex-column justify-content-center align-items-center flex-shrink-0" style="background-color: #382f2f; color: #f2ebd9; padding: 8px 12px; margin-top: -5px;">
+                                    <span class="fw-bold fs-4 fs-md-3" style="line-height: 1;">${rate}</span>
+                                    <span class="fw-bold" style="font-size: 0.6rem; letter-spacing: 1px; margin-top: 4px;">RATING</span>
                                   </div>
-                                </div>
-                                
-                                <div class="rounded shadow-sm d-flex flex-column justify-content-center align-items-center flex-shrink-0" style="background-color: #382f2f; color: #f2ebd9; padding: 10px 16px; margin-top: -10px;">
-                                  <span class="fw-bold fs-3" style="line-height: 1;">${rate}</span>
-                                  <span class="fw-bold" style="font-size: 0.7rem; letter-spacing: 1px; margin-top: 4px;">RATING</span>
-                                </div>
                               </div>
 
                               <div class="mb-3 text-start">
