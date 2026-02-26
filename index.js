@@ -170,11 +170,10 @@ app.get("/view", async (req, res) => {
     const neighborhood = req.query.neighborhood;
     const cuisine = req.query.cuisine;
     const selectedRestaurant = req.query.restaurantName;
-    
     const page = parseInt(req.query.page) || 1;
     const itemsPerPage = 10;
 
-    let viewContentHtml = `
+    let viewContentHtml =   `
                                 <div class="d-flex justify-content-center align-items-center" style="min-height: 60vh;">
                                     <h1 class="text-center fw-bold" 
                                         style="color: #382f2f">
@@ -188,22 +187,33 @@ app.get("/view", async (req, res) => {
             const backLink = `/view?neighborhood=${encodeURIComponent(neighborhood)}&cuisine=${encodeURIComponent(cuisine)}&page=${page}`;
             const cleanSelectedRestaurant = selectedRestaurant.replace(/[^a-zA-Z0-9]/g, '');
             
-            viewContentHtml = `
-                <div class="container mt-4">
-                    <h1 id="reviewsTitle" class="fw-bold mb-3 text-center" style="color: #382f2f; display: none;">
-                        Community Reviews for "${cleanSelectedRestaurant}" 👨‍🍳
-                    </h1>
-                    
-                    <div id="postsContainer" class="mt-4"></div>
+            viewContentHtml =   `
+                                    <div class="container mt-4">
+                                        
+                                        <div class="row align-items-center mb-4">
+                                            
+                                            <div class="col-2 col-md-3 text-start">
+                                                <a href="${backLink}" class="btn fw-bold shadow-sm px-2 py-1" 
+                                                style="background-color: #382f2f; color: white; border-radius: 8px; font-size: 0.9rem;">
+                                                    <i class="bi bi-arrow-left"></i> 
+                                                    <span class="d-none d-lg-inline ms-1">Back to restaurant list</span>
+                                                </a>
+                                            </div>
+                                            
+                                            <div class="col-8 col-md-6 text-center">
+                                                <h1 id="reviewsTitle" class="fw-bold mb-0 fs-3 fs-md-1" style="color: #382f2f; display: none;">
+                                                    Community Reviews for "${cleanSelectedRestaurant}" 👨‍🍳
+                                                </h1>
+                                            </div>
+                                            
+                                            <div class="col-2 col-md-3"></div>
+                                            
+                                        </div>
+                                        
+                                        <div id="postsContainer" class="mt-4"></div>
 
-                    <div class="text-center mt-5 mb-4">
-                        <a href="${backLink}" class="btn px-4 py-2 fw-bold shadow-sm" 
-                        style="background-color: #382f2f; color: white; border-radius: 8px;">
-                            <i class="bi bi-arrow-left me-2"></i> Back to restaurant list
-                        </a>
-                    </div>
-                </div>
-            `;
+                                    </div>
+                                `;
         } else if (neighborhood && cuisine) {
             const categoriesMap = {
                 'Any': 'catering.restaurant',
@@ -364,26 +374,26 @@ app.get("/view", async (req, res) => {
                                                 const encodedRestName = encodeURIComponent(place.displayName);
                                                 const address = place.address || "Address not available";
                                                 
-                                                ulHtml += \`
-                                                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                                                        <div class="ms-3 text-start">
-                                                            <span class="fw-bold d-block fs-5">
-                                                                \${place.displayName}
-                                                                <span class="restaurant-stats fw-bold ms-2">
-                                                                    <span class="text-muted" style="font-size: 1.1rem;"> | ⭐ \${place.txtRate} | 💵 \${place.txtPrice}</span>
-                                                                </span>
-                                                            </span>
-                                                            <span class="text-muted fw-bold" style="font-size: 0.85rem;">
-                                                                📍 \${address}
-                                                            </span>
-                                                        </div>
-                                                        <a href="/view?neighborhood=\${neighborhood}&cuisine=\${cuisine}&restaurantName=\${encodedRestName}&page=\${validPage}&sort=\${currentSort}" 
-                                                        class="text-primary text-decoration-none me-3" 
-                                                        style="font-size: 0.9rem; white-space: nowrap; margin-left: 15px;">
-                                                        See the reviews <i class="bi bi-arrow-right"></i>
-                                                        </a>
-                                                    </li>
-                                                \`;
+                                                ulHtml +=  \`
+                                                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                                    <div class="ms-3 text-start">
+                                                                        <span class="fw-bold d-block fs-5">
+                                                                            \${place.displayName}
+                                                                            <span class="restaurant-stats fw-bold ms-2">
+                                                                                <span class="text-muted" style="font-size: 1.1rem;"> | ⭐ \${place.txtRate} | 💵 \${place.txtPrice}</span>
+                                                                            </span>
+                                                                        </span>
+                                                                        <span class="text-muted fw-bold" style="font-size: 0.85rem;">
+                                                                            📍 \${address}
+                                                                        </span>
+                                                                    </div>
+                                                                    <a href="/view?neighborhood=\${neighborhood}&cuisine=\${cuisine}&restaurantName=\${encodedRestName}&page=\${validPage}&sort=\${currentSort}" 
+                                                                    class="text-primary text-decoration-none me-3" 
+                                                                    style="font-size: 0.9rem; white-space: nowrap; margin-left: 15px;">
+                                                                    See the reviews <i class="bi bi-arrow-right"></i>
+                                                                    </a>
+                                                                </li>
+                                                            \`;
                                             });
                                             ulHtml += '</ul>';
                                             document.getElementById('dynamicListContainer').innerHTML = ulHtml;
@@ -475,9 +485,106 @@ app.get("/view", async (req, res) => {
                                         </div>
                                     </div>
 
+                                    <div class="container mb-4 mt-3 text-center position-relative" style="max-width: 625px;">
+                                        <input type="text" id="restaurantSearchBox" class="form-control elegant-input mx-auto shadow-sm" placeholder="Search by restaurant name..." autocomplete="off">
+                                        
+                                        <ul id="searchSuggestions" class="dropdown-menu w-100 shadow-lg text-start" style="display: none; position: absolute; top: 100%; left: 0; z-index: 1050; max-height: 250px; overflow-y: auto; border-radius: 12px; border: 1px solid #bbae87;"></ul>
+                                    </div>
+
                                     <div id="apiResultsContainer" class="cards-container"> 
                                         ${listContentHtml} 
                                     </div>
+
+                                    <script>
+                                        document.addEventListener("DOMContentLoaded", function() {
+                                            const searchBox = document.getElementById('restaurantSearchBox');
+                                            const suggestionsBox = document.getElementById('searchSuggestions');
+                                            const listContainer = document.getElementById('dynamicListContainer');
+                                            const paginationContainer = document.getElementById('dynamicPaginationContainer');
+                                            
+                                            let originalListHtml = "";
+                                            if (listContainer) originalListHtml = listContainer.innerHTML;
+                                            
+                                            if (searchBox && suggestionsBox && typeof allPlaces !== 'undefined') {
+                                                
+                                                searchBox.addEventListener('input', function() {
+                                                    const searchTerm = this.value.toLowerCase().trim();
+                                                    suggestionsBox.innerHTML = ''; 
+
+                                                    if (searchTerm.length === 0) {
+                                                        suggestionsBox.style.display = 'none';
+                                                        listContainer.innerHTML = originalListHtml;
+                                                        paginationContainer.style.display = ''; 
+                                                        return;
+                                                    }
+
+                                                    const matches = allPlaces.filter(place => {
+                                                        const cleanName = place.name.toLowerCase();
+                                                        return cleanName.includes(searchTerm);
+                                                    });
+
+                                                    if (matches.length > 0) {
+                                                        suggestionsBox.style.display = 'block';
+                                                        
+                                                        matches.forEach(match => {
+                                                            const suggestionListItem = document.createElement('li');
+                                                            const dropdownOptionLink = document.createElement('a');
+                                                            dropdownOptionLink.className = 'dropdown-item py-2 fw-medium';
+                                                            dropdownOptionLink.href = '#';
+                                                            dropdownOptionLink.style.cursor = 'pointer';
+                                                            dropdownOptionLink.style.color = '#382f2f';
+                                                            dropdownOptionLink.textContent = match.name;
+                                                            
+                                                            dropdownOptionLink.addEventListener('click', function(e) {
+                                                                e.preventDefault(); 
+                                                                searchBox.value = match.name; 
+                                                                suggestionsBox.style.display = 'none'; 
+                                                                
+                                                                paginationContainer.style.display = 'none';
+
+                                                                const encodedRestName = encodeURIComponent(match.displayName);
+                                                                const address = match.address || "Address not available";
+                                                                
+                                                                listContainer.innerHTML =  \`
+                                                                                                <ul class="list-group">
+                                                                                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                                                                        <div class="ms-3 text-start">
+                                                                                                            <span class="fw-bold d-block fs-5">
+                                                                                                                \${match.displayName}
+                                                                                                                <span class="restaurant-stats fw-bold ms-2">
+                                                                                                                    <span class="text-muted" style="font-size: 1.1rem;"> | ⭐ \${match.txtRate} | 💵 \${match.txtPrice}</span>
+                                                                                                                </span>
+                                                                                                            </span>
+                                                                                                            <span class="text-muted fw-bold" style="font-size: 0.85rem;">
+                                                                                                                📍 \${address}
+                                                                                                            </span>
+                                                                                                        </div>
+                                                                                                        <a href="/view?neighborhood=\${neighborhood}&cuisine=\${cuisine}&restaurantName=\${encodedRestName}&page=1&sort=\${currentSort}" 
+                                                                                                        class="text-primary text-decoration-none me-3" 
+                                                                                                        style="font-size: 0.9rem; white-space: nowrap; margin-left: 15px;">
+                                                                                                        See the reviews <i class="bi bi-arrow-right"></i>
+                                                                                                        </a>
+                                                                                                    </li>
+                                                                                                </ul>
+                                                                                            \`;
+                                                            });
+                                                            
+                                                            suggestionListItem.appendChild(dropdownOptionLink);
+                                                            suggestionsBox.appendChild(suggestionListItem);
+                                                        });
+                                                    } else {
+                                                        suggestionsBox.style.display = 'none';
+                                                    }
+                                                });
+
+                                                document.addEventListener('click', function(e) {
+                                                    if (!searchBox.contains(e.target) && !suggestionsBox.contains(e.target)) {
+                                                        suggestionsBox.style.display = 'none';
+                                                    }
+                                                });
+                                            }
+                                        });
+                                    </script>
                                 </div>
                             `;
         }
@@ -494,7 +601,7 @@ app.get("/view", async (req, res) => {
                                 ${viewContentHtml}
                             </div>
                         </div>
-                    `
+                     `
     });
 });
 
