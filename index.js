@@ -9,14 +9,15 @@ const PORT = process.env.PORT || 3000;
 app.use(express.static("public"));
 
 const db = new pg.Client({
-  user: process.env.PG_USER,
-  host: process.env.PG_HOST,
-  database: process.env.PG_DATABASE,
-  password: process.env.PG_PASSWORD,
-  port: process.env.PG_PORT 
+    connectionString: process.env.DATABASE_URL,
+    ssl: {
+        rejectUnauthorized: false 
+    }
 });
 
-db.connect();
+db.connect()
+    .then(() => console.log("Successfully connected to the cloud database!"))
+    .catch(err => console.error("Error connecting to the database:", err.stack));
 
 const apiKey = process.env.GEOAPIFY_API_KEY;
 
