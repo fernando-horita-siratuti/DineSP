@@ -772,16 +772,80 @@ app.get("/login", (req, res) => {
     res.render("index.ejs", { 
         activePage: "login",
         loginPage: `
-                    <h1>Login Test</h1>
+                    <div class="container pt-5">
+                        <div class="row justify-content-center">
+                            <div class="col-12 col-md-8 col-lg-5">
+                                <div class="card shadow-lg border-0" style="background-color: #f4efeb; border-radius: 20px;">
+                                    <div class="card-body p-5 text-center">
+                                        <h2 class="fw-bold mb-4" style="color: #433c33;">Welcome Back</h2>
+                                        <p class="mb-4" style="color: #6a6053;">Please log in to your account.</p>
+
+                                        <form action="/login" method="POST">
+                                            <div class="form-floating mb-3 text-start">
+                                                <input type="email" class="form-control" id="emailInput" name="email" placeholder="name@example.com" required style="border-radius: 10px; border: 1px solid #d8cbb8;">
+                                                <label for="emailInput" style="color: #6a6053;">Email address</label>
+                                            </div>
+                                            
+                                            <div class="form-floating mb-4 text-start">
+                                                <input type="password" class="form-control" id="passwordInput" name="password" placeholder="Password" required style="border-radius: 10px; border: 1px solid #d8cbb8;">
+                                                <label for="passwordInput" style="color: #6a6053;">Password</label>
+                                            </div>
+
+                                            <button type="submit" class="btn w-100 fw-bold fs-5 rounded-pill mb-3" style="background-color: #433c33; color: #d8cbb8; padding: 10px 0;">
+                                                Login
+                                            </button>
+                                        </form>
+
+                                        <p class="mt-3 mb-0" style="color: #433c33;">
+                                            Don't have an account? 
+                                            <a href="/register" class="text-decoration-none fw-bold" style="color: #8c7a6b;">Register</a>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                    `
     });
 });
 
-app.get("/signUp", (req, res) => {
+app.get("/register", (req, res) => {
     res.render("index.ejs", { 
-        activePage: "signUp",
+        activePage: "register",
         signUpPage: `
-                    <h1>Sign Up Test</h1>
+                        <div class="container pt-5">
+                            <div class="row justify-content-center">
+                                <div class="col-12 col-md-8 col-lg-5">
+                                    <div class="card shadow-lg border-0" style="background-color: #f4efeb; border-radius: 20px;">
+                                        <div class="card-body p-5 text-center">
+                                            <h2 class="fw-bold mb-4" style="color: #433c33;">Create Account</h2>
+                                            <p class="mb-4" style="color: #6a6053;">Join us and start reviewing your favorite spots.</p>
+
+                                            <form action="/register" method="POST">
+                                                <div class="form-floating mb-3 text-start">
+                                                    <input type="email" class="form-control" id="emailRegister" name="email" placeholder="name@example.com" required style="border-radius: 10px; border: 1px solid #d8cbb8;">
+                                                    <label for="emailRegister" style="color: #6a6053;">Email address</label>
+                                                </div>
+                                                
+                                                <div class="form-floating mb-4 text-start">
+                                                    <input type="password" class="form-control" id="passwordRegister" name="password" placeholder="Password" required style="border-radius: 10px; border: 1px solid #d8cbb8;">
+                                                    <label for="passwordRegister" style="color: #6a6053;">Password</label>
+                                                </div>
+
+                                                <button type="submit" class="btn w-100 fw-bold fs-5 rounded-pill mb-3" style="background-color: #433c33; color: #d8cbb8; padding: 10px 0;">
+                                                    Sign Up
+                                                </button>
+                                            </form>
+
+                                            <p class="mt-3 mb-0" style="color: #433c33;">
+                                                Already have an account? 
+                                                <a href="/login" class="text-decoration-none fw-bold" style="color: #8c7a6b;">Login</a>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     `
     });
 });

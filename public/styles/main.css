@@ -13,6 +13,7 @@ footer {
 
 body {
     font-family: 'Poppins', sans-serif; 
+    background-color: #55514b !important;
 }
 
 h1, h2, h3, h4, h5, h6, .hero-title, .navbar-brand {
