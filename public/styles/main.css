@@ -365,6 +365,17 @@ h1, h2, h3, h4, h5, h6, .hero-title, .navbar-brand {
     gap: 15px;
 }
 
+.auth-link:hover {
+    color: #ffffff !important;
+    transition: color 0.3s ease;
+}
+
+.auth-btn:hover {
+    background-color: #d8cbb8;
+    color: #ffffff !important; 
+    transition: all 0.3s ease;
+}
+
 @media (min-width: 768px) {
     .custom-rating {
         flex: 0 0 12% !important;
@@ -415,6 +426,12 @@ h1, h2, h3, h4, h5, h6, .hero-title, .navbar-brand {
 
 @media (min-width: 992px) {
     #navbarNav {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    .absolute-center {
         position: absolute;
         left: 50%;
         transform: translateX(-50%);

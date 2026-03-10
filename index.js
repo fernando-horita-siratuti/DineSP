@@ -8,7 +8,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 app.use(express.static("public"));
 
-const db = new pg.Client({
+const db = new pg.Pool({
     connectionString: process.env.DATABASE_URL,
     ssl: {
         rejectUnauthorized: false 
@@ -75,7 +75,7 @@ app.get("/api/verify-restaurant", async (req, res) => {
 app.get("/", (req, res) => {
     res.render("index.ejs", { 
         activePage: "home",
-        homeSection: `
+        homePage: `
                         <section class="hero-section">
                             <div class="container">
                                 <div class="hero-content mx-auto text-center">
@@ -607,7 +607,7 @@ app.get("/view", async (req, res) => {
 
     res.render("index.ejs", {
         activePage: "view",
-        viewSection: `
+        viewPage: `
                         <div class="container-fluid" id="viewScreen">
                             <div class="container" id="viewTextContainer">
                                 ${viewContentHtml}
@@ -620,7 +620,7 @@ app.get("/view", async (req, res) => {
 app.get("/review", (req, res) => {
     res.render("index.ejs", {
         activePage: "review",
-        reviewSection: `
+        reviewPage: `
                         <div id="reviewScreen" class="d-flex justify-content-center">
                             <form id="postForm" class="w-100" style="max-width: 900px;">
                             
@@ -764,6 +764,24 @@ app.get("/review", (req, res) => {
                             });
                             });
                         </script>
+                    `
+    });
+});
+
+app.get("/login", (req, res) => {
+    res.render("index.ejs", { 
+        activePage: "login",
+        loginPage: `
+                    <h1>Login Test</h1>
+                   `
+    });
+});
+
+app.get("/signUp", (req, res) => {
+    res.render("index.ejs", { 
+        activePage: "signUp",
+        signUpPage: `
+                    <h1>Sign Up Test</h1>
                     `
     });
 });
