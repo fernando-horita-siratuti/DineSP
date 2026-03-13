@@ -36,46 +36,55 @@
             </li>
           </ul>
 
-          <div class="d-flex align-items-center ms-auto justify-content-end mt-3 me-4 mt-lg-0">
+          <div class="d-flex align-items-center ms-auto justify-content-end mt-3 me-3 mt-lg-0">
             <% if (locals.user) { %>
-              <div class="dropdown">
-                <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="color: #d8cbb8;">
-                    <i class="bi bi-person-circle fs-4 me-2"></i>
-                    <span class="fw-medium" style="font-size: 1.05rem;"><%= user.username %></span>
+            <div class="dropdown d-flex justify-content-center w-100 w-lg-auto ms-lg-auto mt-4 mt-lg-0 mb-3 mb-lg-0">
+              <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="color: #d8cbb8;">
+                  <i class="bi bi-person-circle fs-4 me-2"></i>
+                  <span class="fw-medium" style="font-size: 1.05rem;"><%= user.username %></span>
+              </a>
+              
+              <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2" aria-labelledby="userDropdown" style="background-color: #f4efeb; border-radius: 12px;">
+                  <li class="px-3 py-2 text-center">
+                      <span class="fw-bold d-block" style="color: #433c33; font-size: 1.1rem;"><%= user.username %></span>
+                      <span class="text-muted" style="font-size: 0.9rem;">#<%= user.id %></span>
+                  </li>
+                  
+                  <li><hr class="dropdown-divider" style="border-color: #d8cbb8; opacity: 0.5;"></li>
+                  
+                  <li>
+                      <a class="dropdown-item d-flex align-items-center py-2" href="/profile" style="color: #433c33; font-weight: 500;">
+                          <i class="bi bi-card-list me-3 fs-5"></i> Meus Reviews
+                      </a>
+                  </li>
+                  
+                  <li>
+                      <a class="dropdown-item d-flex align-items-center py-2 text-danger fw-bold" href="/logout">
+                          <i class="bi bi-box-arrow-right me-3 fs-5"></i> Sair
+                      </a>
+                  </li>
+              </ul>
+            </div>
+          <% } else { %>
+            <div class="row w-100 m-0 w-lg-auto ms-lg-auto mt-4 mt-lg-0 mb-3 mb-lg-0 flex-nowrap align-items-center justify-content-end">
+              <div class="col-6 col-lg-auto d-flex justify-content-end pe-2 pe-lg-0">
+                <a href="/login" class="text-decoration-none d-flex align-items-center auth-link" style="color: <%= activePage === 'login' ? '#ffffff' : '#d8cbb8' %>;">
+                  <i class="bi bi-person-circle fs-4 me-2"></i>
+                  <span class="fw-medium" style="font-size: 1.05rem;">Login</span>
                 </a>
-                
-                <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2" aria-labelledby="userDropdown" style="background-color: #f4efeb; border-radius: 12px;">
-                    <li class="px-3 py-2 text-center">
-                        <span class="fw-bold d-block" style="color: #433c33; font-size: 1.1rem;"><%= user.username %> #<%= user.id %></span>
-                    </li>
-                    
-                    <li><hr class="dropdown-divider" style="border-color: #d8cbb8; opacity: 0.5;"></li>
-                    
-                    <li>
-                        <a class="dropdown-item d-flex align-items-center py-2" href="/profile" style="color: #433c33; font-weight: 500;">
-                            <i class="bi bi-card-list me-3 fs-5"></i> My Reviews
-                        </a>
-                    </li>
-                    
-                    <li>
-                        <a class="dropdown-item d-flex align-items-center py-2 text-danger fw-bold" href="/logout">
-                            <i class="bi bi-box-arrow-right me-3 fs-5"></i> Logout
-                        </a>
-                    </li>
-                </ul>
               </div>
-            <% } else { %>
-              <a href="/login" class="text-decoration-none d-flex align-items-center auth-link" style="color: <%= activePage === 'login' ? '#ffffff' : '#d8cbb8' %>;">
-                <i class="bi bi-person-circle fs-4 me-2"></i>
-                <span class="fw-medium" style="font-size: 1.05rem;">Login</span>
-              </a>
 
-              <span class="mx-3 opacity-75 d-none d-lg-inline" style="color: #d8cbb8;">|</span>
+              <div class="col-auto d-none d-lg-block px-3">
+                <span class="opacity-75" style="color: #d8cbb8;">|</span>
+              </div>
 
-              <a href="/register" class="btn rounded-pill px-4 py-1 auth-btn fw-medium" style="border: 1px solid <%= activePage === 'register' ? '#ffffff' : '#d8cbb8' %>; color: <%= activePage === 'register' ? '#ffffff' : '#d8cbb8' %>; font-size: 1.05rem;">
-                Register
-              </a>
-            <% } %>
+              <div class="col-6 col-lg-auto d-flex justify-content-start ps-2 ps-lg-0">
+                <a href="/register" class="btn rounded-pill px-4 py-1 auth-btn fw-medium" style="border: 1px solid <%= activePage === 'register' ? '#ffffff' : '#d8cbb8' %>; color: <%= activePage === 'register' ? '#ffffff' : '#d8cbb8' %>; font-size: 1.05rem;">
+                  Register
+                </a>
+              </div>
+            </div>
+          <% } %>
           </div>
         </div>
       </div>

@@ -634,12 +634,7 @@ app.get("/review", (req, res) => {
                             <form id="postForm" class="w-100" style="max-width: 900px;">
                             
                             <div class="row g-4 mb-4 mt-2">
-                                <div class="col-md-6 text-start">
-                                    <label for="usernameInput" class="form-label review-label fw-bold">Username (max 20 characters)</label>
-                                    <input type="text" class="form-control elegant-input" id="usernameInput" placeholder="Ex: Tim_Reviews123" maxlength="20">
-                                </div>
-                                
-                                <div class="col-md-6 text-start">
+                                <div class="col-12 text-start">
                                     <label for="restaurantInput" class="form-label review-label fw-bold">Restaurant Name</label>
                                     <input type="text" class="form-control elegant-input" id="restaurantInput" placeholder="Ex: Taiyoo" maxlength="30">
                                 </div>
