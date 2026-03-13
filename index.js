@@ -4,6 +4,7 @@ import axios from "axios";
 import bodyParser from "body-parser";
 import pg from "pg";
 import bcrypt from "bcrypt"
+import session from "express-session";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -23,6 +24,12 @@ db.on('error', (err) => {
 db.connect()
     .then(() => console.log("Successfully connected to the cloud database."))
     .catch(err => console.error("Error connecting to the database:", err.stack));
+
+app.use(session({
+    secret: 'dinesp_key', 
+    resave: false,
+    saveUninitialized: false
+}));
 
 const apiKey = process.env.GEOAPIFY_API_KEY;
 
@@ -80,6 +87,7 @@ app.get("/api/verify-restaurant", async (req, res) => {
 app.get("/", (req, res) => {
     res.render("index.ejs", { 
         activePage: "home",
+        user: req.session.user,
         homePage: `
                         <section class="hero-section">
                             <div class="container">
@@ -606,6 +614,7 @@ app.get("/view", async (req, res) => {
 
     res.render("index.ejs", {
         activePage: "view",
+        user: req.session.user,
         viewPage: `
                         <div class="container-fluid" id="viewScreen">
                             <div class="container" id="viewTextContainer">
@@ -619,6 +628,7 @@ app.get("/view", async (req, res) => {
 app.get("/review", (req, res) => {
     res.render("index.ejs", {
         activePage: "review",
+        user: req.session.user,
         reviewPage: `
                         <div id="reviewScreen" class="d-flex justify-content-center">
                             <form id="postForm" class="w-100" style="max-width: 900px;">
@@ -768,6 +778,7 @@ app.get("/review", (req, res) => {
 app.get("/login", (req, res) => {
     res.render("index.ejs", { 
         activePage: "login",
+        user: req.session.user,
         loginPage: `
                     <div class="container mt-4">
                         <div class="row justify-content-center">
@@ -824,6 +835,12 @@ app.post("/login", async (req, res) => {
                     console.log("Error comparing passwords: ", err);
                 } else {
                     if (result) {
+                        req.session.user = {
+                            id: user.id,
+                            username: user.username, 
+                            email: user.email
+                        };
+                        
                         res.send("<script>alert('You are now logged in!'); window.location.href = '/';</script>");
                     } else {
                         res.send("<script>alert('Incorret email/password. Please try again.'); window.location.href = '/login';</script>");
@@ -841,6 +858,7 @@ app.post("/login", async (req, res) => {
 app.get("/register", (req, res) => {
     res.render("index.ejs", { 
         activePage: "register",
+        user: req.session.user,
         signUpPage: `
                         <div class="container mt-4">
                             <div class="row justify-content-center">
@@ -914,6 +932,11 @@ app.post("/register", async (req, res) => {
     } catch (err) {
         console.log(err);
     }
+});
+
+app.get("/logout", (req, res) => {
+    req.session.destroy(); 
+    res.send("<script>alert('Successfully logged out.'); window.location.href = '/';</script>");
 });
 
 async function getNeighborhoodId(neighborhood, cidade = "São Paulo") {
