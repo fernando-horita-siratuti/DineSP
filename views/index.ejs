@@ -11,8 +11,10 @@
       <%- reviewPage %>
   <% } else if (locals.loginPage) { %>
       <%- loginPage %>  
+  <% } else if (locals.signUpPage) { %>
+      <%- signUpPage %>
   <% } else { %>
-      <%- signUpPage %>  
+      <%- profilePage %>  
   <% } %>
 
 <%- include("partials/footer.ejs") %>

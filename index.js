@@ -265,7 +265,7 @@ app.get("/view", async (req, res) => {
                 reviews.forEach(review => {
                     const cardRate = review.rating + (review.rating >= 8 ? '/10 ⭐' : '/10');
                     const cardPrice = review.price; 
-                    const formatedData = new Date(review.date).toLocaleDateString('pt-BR', { timeZone: 'UTC' });
+                    const formatedDate = new Date(review.date).toLocaleDateString('pt-BR', { timeZone: 'UTC' });
                     const username = review.username || "Deleted User"; 
                     const userId = review.user_id;
 
@@ -292,7 +292,7 @@ app.get("/view", async (req, res) => {
                                                     <p class="text-muted mb-0 fw-bold" style="font-size: 1.1rem;">
                                                         <span class="d-block d-md-inline">📍 ${review.neighborhood} &nbsp; | &nbsp; 👨‍🍳 ${review.cuisine}</span>
                                                         <span class="d-none d-md-inline"> &nbsp; | &nbsp; </span>
-                                                        <span class="d-block d-md-inline mt-1 mt-md-0">💵 ${cardPrice} &nbsp; | &nbsp; 📅 ${formatedData}</span>
+                                                        <span class="d-block d-md-inline mt-1 mt-md-0">💵 ${cardPrice} &nbsp; | &nbsp; 📅 ${formatedDate}</span>
                                                     </p>
                                                 </div>
 
@@ -1103,6 +1103,208 @@ app.post("/register", async (req, res) => {
 app.get("/logout", (req, res) => {
     req.session.destroy(); 
     res.send("<script>alert('Successfully logged out.'); window.location.href = '/';</script>");
+});
+
+app.get("/profile", async (req, res) => {
+    const userId = req.session.user.id;
+    const username = req.session.user.username;
+    const page = parseInt(req.query.page) || 1;
+    const reviewsPerPage = 5;
+    const offset = (page - 1) * reviewsPerPage;
+
+    const sortOrder = req.query.sort || 'newest';
+    let orderClause = "ORDER BY date DESC, id DESC"; 
+    
+    if (sortOrder === 'rating_desc') {
+        orderClause = "ORDER BY CAST(rating AS DECIMAL) DESC, date DESC"; 
+    } else if (sortOrder === 'price_asc') {
+        orderClause = "ORDER BY LENGTH(price) ASC, date DESC"; 
+    } else if (sortOrder === 'price_desc') {
+        orderClause = "ORDER BY LENGTH(price) DESC, date DESC"; 
+    }
+
+    try {
+        const reviewsResult = await db.query(
+            `
+                SELECT *, COUNT(*) OVER() as full_count 
+                FROM reviews 
+                WHERE user_id = $1 
+                ${orderClause} 
+                LIMIT $2 OFFSET $3
+            `, 
+            [userId, reviewsPerPage, offset]
+        );
+
+        const reviews = reviewsResult.rows;
+        let reviewsHtml = '';
+        let pagHtml = '';
+        let sortHtml = '';
+        let scriptHtml = '';
+
+        if (reviews.length > 0) {
+            
+            sortHtml =  `
+                            <div class="sort-wrapper" style="position: relative; width: 220px; z-index: 1050;">
+                                <div id="profileSortDropdown" class="custom-dropdown-display shadow-sm w-100 d-flex justify-content-between align-items-center px-3 py-2" style="background-color: #ffffff; border: 1px solid #d4c598; border-radius: 8px; cursor: pointer;">
+                                    <span id="profileSortText" class="fw-medium text-dark">Newest First</span>
+                                    <i class="bi bi-chevron-down text-dark"></i>
+                                </div>
+                                <div id="profileSortOptions" class="custom-dropdown-options shadow-lg w-100 mt-2" style="position: absolute; top: 100%; right: 0; z-index: 1060; border-radius: 8px; overflow: hidden; background-color: white;">
+                                    <div class="custom-dropdown-item profile-sort-item text-center py-2" data-value="newest" style="cursor: pointer;">Newest First</div>
+                                    <div class="custom-dropdown-item profile-sort-item text-center py-2" data-value="rating_desc" style="cursor: pointer;">Highest Rated</div>
+                                    <div class="custom-dropdown-item profile-sort-item text-center py-2" data-value="price_asc" style="cursor: pointer;">Lowest Price</div>
+                                    <div class="custom-dropdown-item profile-sort-item text-center py-2" data-value="price_desc" style="cursor: pointer;">Highest Price</div>
+                                </div>
+                            </div>
+                        `;
+
+            reviews.forEach(review => {
+                const cardRate = review.rating + (review.rating >= 8 ? '/10 ⭐' : '/10');
+                const cardPrice = review.price; 
+                const formatedDate = new Date(review.date).toLocaleDateString('pt-BR', { timeZone: 'UTC' });
+
+                reviewsHtml +=  `
+                                    <div class="card shadow-sm border-0 mb-4 mx-auto" style="border-radius: 16px; background-color: #ffffff; max-width: 800px; width: 100%;">
+                                        <div class="card-body p-3 p-md-4">
+                                            <div class="d-flex justify-content-between align-items-start mb-3 gap-2 gap-md-3">
+                                                <div class="mb-3 text-start flex-grow-1">
+                                                    <h5 class="fw-bold fs-4 mb-2" style="color: #382f2f;">🍽️ ${review.restaurant_name}</h5>
+                                                    <p class="text-muted mb-0 fw-bold" style="font-size: 1.1rem;">
+                                                        <span class="d-block d-md-inline">📍 ${review.neighborhood} &nbsp; | &nbsp; 👨‍🍳 ${review.cuisine}</span>
+                                                        <span class="d-none d-md-inline"> &nbsp; | &nbsp; </span>
+                                                        <span class="d-block d-md-inline mt-1 mt-md-0">💵 ${cardPrice} &nbsp; | &nbsp; 📅 ${formatedDate}</span>
+                                                    </p>
+                                                </div>
+                                                <div class="rounded shadow-sm d-flex flex-column justify-content-center align-items-center flex-shrink-0" style="background-color: #382f2f; color: #f2ebd9; padding: 8px 12px; margin-top: -5px;">
+                                                    <span class="fw-bold fs-4 fs-md-3" style="line-height: 1;">${cardRate}</span>
+                                                    <span class="fw-bold" style="font-size: 0.6rem; letter-spacing: 1px; margin-top: 4px;">RATING</span>
+                                                </div>
+                                            </div>
+
+                                            <div class="p-3 rounded text-start" style="background-color: #f2ebd9; border-left: 5px solid #bbae87;">
+                                                <p class="card-text mb-0" style="white-space: pre-wrap; color: #55514b; font-size: 1.05rem; font-style: italic;">"${review.review_text}"</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `;
+            });
+
+            const totalReviews = parseInt(reviews[0].full_count);
+            const totalPages = Math.ceil(totalReviews / reviewsPerPage);
+
+            if (totalPages > 1) {
+                pagHtml = '<div class="d-flex justify-content-center align-items-end flex-wrap gap-4 mt-5">';
+                for (let i = 1; i <= totalPages; i++) {
+                    const isActive = (i === page);
+                    const color = isActive ? '#382f2f' : '#d4c598'; 
+                    const transform = isActive ? 'scale(1.3)' : 'scale(1)';
+                    const opacity = isActive ? '1' : '0.6'; 
+                    
+                    pagHtml +=  `
+                                    <a href="/profile?page=${i}&sort=${sortOrder}" class="text-decoration-none d-flex flex-column align-items-center" 
+                                    style="transition: all 0.3s ease; transform: ${transform}; opacity: ${opacity};">
+                                        <img src="/images/chefHat.png" alt="Page ${i}" width="45" height="45">
+                                        <span class="fw-bold mt-2" style="color: ${color}; font-size: 0.9rem;">
+                                            ${i}
+                                        </span>
+                                    </a>
+                                `;
+                }
+                pagHtml += '</div>';
+            }
+
+            scriptHtml =    `
+                                <script>
+                                    (function() {
+                                        const sortDisplay = document.getElementById('profileSortDropdown');
+                                        const sortOptions = document.getElementById('profileSortOptions');
+                                        const sortText = document.getElementById('profileSortText');
+                                        const sortItems = document.querySelectorAll('.profile-sort-item');
+
+                                        const currentSort = "${sortOrder}";
+                                        const labels = {
+                                            'newest': 'Newest First',
+                                            'rating_desc': 'Highest Rated',
+                                            'price_asc': 'Lowest Price',
+                                            'price_desc': 'Highest Price'
+                                        };
+
+                                        if (sortDisplay && sortOptions) {
+                                            if (labels[currentSort]) {
+                                                sortText.innerText = labels[currentSort];
+                                            }
+
+                                            sortDisplay.addEventListener('click', (e) => {
+                                                e.stopPropagation();
+                                                sortOptions.classList.toggle('show');
+                                            });
+
+                                            document.addEventListener('click', (e) => {
+                                                if (!sortDisplay.contains(e.target) && !sortOptions.contains(e.target)) {
+                                                    sortOptions.classList.remove('show');
+                                                }
+                                            });
+
+                                            sortItems.forEach(item => {
+                                                item.addEventListener('click', (e) => {
+                                                    const newSort = e.target.getAttribute('data-value');
+                                                    sortOptions.classList.remove('show');
+                                                    window.location.href = \`/profile?page=1&sort=\${newSort}\`;
+                                                });
+                                            });
+                                        }
+                                    })();
+                                </script>
+                            `;
+
+        } else {
+            reviewsHtml =   `
+                                <div class="text-center mt-5 p-5 bg-white shadow-sm mx-auto" style="border-radius: 16px; max-width: 800px; border: 1px dashed #d4c598;">
+                                    <h3 class="fw-bold text-muted mb-3">No reviews yet!</h3>
+                                    <p class="text-muted fs-5 mb-4">You haven't shared your culinary adventures with the community.</p>
+                                    <a href="/review" class="btn btn-primary px-4 py-2 fw-bold shadow-sm" style="background-color: #382f2f; border: none; border-radius: 8px;">
+                                        Write your first review
+                                    </a>
+                                </div>
+                            `;
+        }
+
+        const profileContent =  `
+                                    <div class="container mt-5 text-center mb-5">
+                                        <div class="mb-5">
+                                            <div class="d-inline-flex justify-content-center align-items-center rounded-circle shadow-sm mb-3" style="width: 120px; height: 120px; background-color: #bbae87; color: white;">
+                                                <i class="bi bi-person-fill" style="font-size: 5rem;"></i>
+                                            </div>
+                                            <h1 class="fw-bold" style="color: #382f2f; font-size: 3rem;">${username}</h1>
+                                            <span class="badge rounded-pill fw-medium fs-6 mt-2" style="background-color: #382f2f; color: #f2ebd9; padding: 8px 16px;">
+                                                User ID: #${userId}
+                                            </span>
+                                        </div>
+                                        
+                                        <div class="d-flex justify-content-between align-items-center mx-auto mb-4 pb-2" style="max-width: 800px; border-bottom: 2px solid #d4c598;">
+                                            <h3 class="fw-bold mb-0 text-start" style="color: #382f2f;">
+                                                My Reviews
+                                            </h3>
+                                            ${sortHtml}
+                                        </div>
+                                        
+                                        <div id="postsContainer">
+                                            ${reviewsHtml}
+                                            ${pagHtml}
+                                            ${scriptHtml}
+                                        </div>
+                                    </div>
+                                `;
+
+        res.render("index.ejs", {
+            activePage: "profile",
+            user: req.session.user,
+            profilePage: profileContent
+        });
+    } catch (err) {
+        console.error("Error loading profile:", err);
+        res.send("Error loading profile data.");
+    }
 });
 
 async function getNeighborhoodId(neighborhood, cidade = "São Paulo") {
