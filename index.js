@@ -626,17 +626,17 @@ app.get("/view", async (req, res) => {
 });
 
 app.get("/review", (req, res) => {
-    res.render("index.ejs", {
-        activePage: "review",
-        user: req.session.user,
-        reviewPage: `
+    let reviewPage = "";
+
+    if (req.session.user) {
+        reviewPage =  `
                         <div id="reviewScreen" class="d-flex justify-content-center">
-                            <form id="postForm" class="w-100" style="max-width: 900px;">
+                            <form id="postForm" action="/review" method="POST" class="w-100" style="max-width: 900px;">
                             
                             <div class="row g-4 mb-4 mt-2">
                                 <div class="col-12 text-start">
                                     <label for="restaurantInput" class="form-label review-label fw-bold">Restaurant Name</label>
-                                    <input type="text" class="form-control elegant-input" id="restaurantInput" placeholder="Ex: Taiyoo" maxlength="30">
+                                    <input type="text" class="form-control elegant-input" id="restaurantInput" name="restaurantName" placeholder="Ex: Taiyoo" maxlength="30" required>
                                 </div>
                             </div>
 
@@ -644,7 +644,7 @@ app.get("/review", (req, res) => {
                                 <div class="col-md-3 text-start">
                                     <label class="form-label review-label fw-bold">Neighborhood</label>
                                     <div class="dropdown w-100">
-                                        <input type="hidden" id="neighborhoodInput" value="">
+                                        <input type="hidden" id="neighborhoodInput" name="neighborhood" value="">
                                         <button class="btn elegant-input dropdown-toggle w-100 d-flex justify-content-between align-items-center" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                         <span class="dropdown-text">Select a neighborhood</span>
                                         </button>
@@ -679,7 +679,7 @@ app.get("/review", (req, res) => {
                                 <div class="col-md-3 text-start">
                                     <label class="form-label review-label fw-bold">Cuisine</label>
                                     <div class="dropdown w-100">
-                                        <input type="hidden" id="cuisineInput" value="">
+                                        <input type="hidden" id="cuisineInput" name="cuisine" value="">
                                         <button class="btn elegant-input dropdown-toggle w-100 d-flex justify-content-between align-items-center" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                         <span class="dropdown-text">Select a cuisine</span>
                                         </button>
@@ -713,7 +713,7 @@ app.get("/review", (req, res) => {
                                 <div class="col-md-2 text-start">
                                     <label class="form-label review-label fw-bold">Price Range</label>
                                     <div class="dropdown w-100">
-                                        <input type="hidden" id="priceInput" value="">
+                                        <input type="hidden" id="priceInput" name="priceRange" value="">
                                         <button class="btn elegant-input dropdown-toggle w-100 d-flex justify-content-between align-items-center" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                         <span class="dropdown-text">Select $-$$$$$</span>
                                         </button>
@@ -729,20 +729,19 @@ app.get("/review", (req, res) => {
 
                                 <div class="col-12 custom-rating text-start">
                                     <label for="ratingInput" class="form-label review-label fw-bold">Rating</label>
-                                    <input type="number" class="form-control elegant-input" id="ratingInput" placeholder="Ex: 10" min="0" max="10" style="padding-left: 10px; padding-right: 10px;">
+                                    <input type="number" class="form-control elegant-input" id="ratingInput" name="rating" placeholder="Ex: 10" min="0" max="10" step="0.5" style="padding-left: 10px; padding-right: 10px;" required>
                                 </div>
 
                                 <div class="col-12 custom-date text-start">
                                     <label for="dateInput" class="form-label review-label fw-bold">Date Visited</label>
-                                    <input type="date" class="form-control elegant-input" id="dateInput" style="padding-left: 10px; padding-right: 10px;"> 
+                                    <input type="date" class="form-control elegant-input" id="dateInput" name="dateVisited" style="padding-left: 10px; padding-right: 10px;" required> 
                                 </div>
-
                             </div>
 
                             <div class="row mb-5">
                                 <div class="col-12 text-start">
                                     <label for="reviewInput" class="form-label review-label fw-bold">Review (max 2000 characters)</label>
-                                    <textarea class="form-control elegant-input" id="reviewInput" rows="6" placeholder="Ex: I really liked this place. The food was well-seasoned and fresh." maxlength="2000"></textarea>
+                                    <textarea class="form-control elegant-input" id="reviewInput" name="reviewText" rows="6" placeholder="Ex: I really liked this place. The food was well-seasoned and fresh." maxlength="2000" required></textarea>
                                 </div>
                             </div>
                             
@@ -751,23 +750,50 @@ app.get("/review", (req, res) => {
                             </div>
                             </form>
                         </div>
+                     `;
+    } else {
+        reviewPage =    `
+                            <div class="d-flex justify-content-center align-items-center mt-5">
+                                <div class="card shadow-lg border-0 text-center p-5" style="background-color: #f4efeb; border-radius: 20px; max-width: 500px; width: 100%;">
+                                    <i class="bi bi-lock-fill mb-3" style="font-size: 3.5rem; color: #433c33;"></i>
+                                    <h2 class="fw-bold mb-3" style="color: #433c33;">Access Denied</h2>
+                                    <p class="fs-5 mb-4" style="color: #6a6053;">You must be logged in to post a review for a restaurant.</p>
+                                    <a href="/login" class="btn w-100 fw-bold fs-5 rounded-pill" style="background-color: #433c33; color: #ffffff; padding: 12px 0;">
+                                        Go to Login
+                                    </a>
+                                </div>
+                            </div>
+                        `;
+    }
 
-                        <script>
-                            document.querySelectorAll('#reviewScreen .dropdown-item').forEach(item => {
-                            item.addEventListener('click', function(e) {
-                                e.preventDefault();
-                                const value = this.getAttribute('data-value');
-                                const text = this.innerText;
-                                const dropdown = this.closest('.dropdown');
-                                
-                                dropdown.querySelector('.dropdown-text').innerText = text;
-                                
-                                dropdown.querySelector('input[type="hidden"]').value = value;
-                            });
-                            });
-                        </script>
-                    `
+    res.render("index.ejs", {
+        activePage: "review",
+        user: req.session.user,
+        reviewPage: reviewPage
     });
+});
+
+app.post("/review", async (req, res) => {
+    if (!req.session.user) {
+        return res.send("<script>alert('You must be logged in to post a review!'); window.location.href = '/login';</script>");
+    }
+
+    const userId = req.session.user.id;
+    const username = req.session.user.username;
+    const { restaurantName, neighborhood, cuisine, priceRange, rating, dateVisited, reviewText } = req.body;
+
+    try {
+        await db.query(
+            `INSERT INTO reviews (user_id, restaurant_name, neighborhood, cuisine, price, rating, date, username, review_text) 
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+            [userId, restaurantName, neighborhood, cuisine, priceRange, rating, dateVisited, username, reviewText]
+        );
+
+        res.send("<script>alert('Your review was successfully posted!');</script>");
+    } catch (err) {
+        console.error("Error storing the review:", err);
+        res.send("<script>alert('An error occurred while posting your review.'); window.history.back();</script>");
+    }
 });
 
 app.get("/login", (req, res) => {
