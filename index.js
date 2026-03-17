@@ -1286,6 +1286,25 @@ app.get("/logout", (req, res) => {
 });
 
 app.get("/profile", async (req, res) => {
+    if (!req.isAuthenticated()) {
+        return res.render("index.ejs", {
+            activePage: "profile",
+            user: null, 
+            profilePage:    `
+                                <div class="d-flex justify-content-center align-items-center mt-5">
+                                    <div class="card shadow-lg border-0 text-center p-5" style="background-color: #f4efeb; border-radius: 20px; max-width: 500px; width: 100%;">
+                                        <i class="bi bi-lock-fill mb-3" style="font-size: 3.5rem; color: #433c33;"></i>
+                                        <h2 class="fw-bold mb-3" style="color: #433c33;">Access Denied</h2>
+                                        <p class="fs-5 mb-4" style="color: #6a6053;">You must be logged in to view your profile.</p>
+                                        <a href="/login" class="btn w-100 fw-bold fs-5 rounded-pill" style="background-color: #433c33; color: #ffffff; padding: 12px 0;">
+                                            Go to Login
+                                        </a>
+                                    </div>
+                                </div>
+                            `
+        });
+    }
+
     const userId = req.user.id;
     const username = req.user.username;
     const page = parseInt(req.query.page) || 1;
@@ -1334,8 +1353,8 @@ app.get("/profile", async (req, res) => {
                                 <div id="profileSortOptions" class="custom-dropdown-options shadow-lg w-100 mt-2" style="position: absolute; top: 100%; right: 0; z-index: 1060; border-radius: 8px; overflow: hidden; background-color: white;">
                                     <div class="custom-dropdown-item profile-sort-item text-center py-2" data-value="newest" style="cursor: pointer;">Newest First</div>
                                     <div class="custom-dropdown-item profile-sort-item text-center py-2" data-value="price_desc" style="cursor: pointer;">Highest Price</div>
-                                    <div class="custom-dropdown-item profile-sort-item text-center py-2" data-value="rating_desc" style="cursor: pointer;">Highest Rated</div>
                                     <div class="custom-dropdown-item profile-sort-item text-center py-2" data-value="price_asc" style="cursor: pointer;">Lowest Price</div>
+                                    <div class="custom-dropdown-item profile-sort-item text-center py-2" data-value="rating_desc" style="cursor: pointer;">Highest Rated</div>
                                     <div class="custom-dropdown-item profile-sort-item text-center py-2" data-value="alpha_asc" style="cursor: pointer;">Restaurant (A-Z)</div>
                                 </div>
                             </div>
@@ -1349,21 +1368,29 @@ app.get("/profile", async (req, res) => {
                 reviewsHtml +=  `
                                     <div class="card shadow-sm border-0 mb-4 mx-auto" style="border-radius: 16px; background-color: #ffffff; max-width: 800px; width: 100%;">
                                         <div class="card-body p-3 p-md-4">
-                                            <div class="d-flex justify-content-between align-items-start mb-3 gap-2 gap-md-3">
-                                                <div class="mb-3 text-start flex-grow-1">
-                                                    <h5 class="fw-bold fs-4 mb-2" style="color: #382f2f;">🍽️ ${review.restaurant_name}</h5>
-                                                    <p class="text-muted mb-0 fw-bold" style="font-size: 1.1rem;">
+                                            <div class="d-flex justify-content-between align-items-stretch mb-3 gap-2 gap-md-3">
+                                                <div class="d-flex flex-column justify-content-between text-start flex-grow-1 mb-0 pb-1">
+                                                    <h5 class="fw-bold fs-4 mb-0" style="color: #382f2f;">🍽️ ${review.restaurant_name}</h5>
+                                                    
+                                                    <p class="text-muted mb-1 fw-bold" style="font-size: 1.1rem;">
                                                         <span class="d-block d-md-inline">📍 ${review.neighborhood} &nbsp; | &nbsp; 👨‍🍳 ${review.cuisine}</span>
                                                         <span class="d-none d-md-inline"> &nbsp; | &nbsp; </span>
                                                         <span class="d-block d-md-inline mt-1 mt-md-0">💵 ${cardPrice} &nbsp; | &nbsp; 📅 ${formatedDate}</span>
                                                     </p>
                                                 </div>
-                                                <div class="rounded shadow-sm d-flex flex-column justify-content-center align-items-center flex-shrink-0" style="background-color: #382f2f; color: #f2ebd9; padding: 8px 12px; margin-top: -5px;">
-                                                    <span class="fw-bold fs-4 fs-md-3" style="line-height: 1;">${cardRate}</span>
-                                                    <span class="fw-bold" style="font-size: 0.6rem; letter-spacing: 1px; margin-top: 4px;">RATING</span>
+                                                
+                                                <div class="d-flex flex-column align-items-end flex-shrink-0">
+                                                    <div class="d-flex gap-3 mb-3" style="margin-top: -8px;">
+                                                        <a href="/edit/${review.id}" class="text-muted" title="Edit Review" style="transition: color 0.2s;"><i class="bi bi-pencil-square fs-5"></i></a>
+                                                        <a href="/delete/${review.id}" class="text-danger" title="Delete Review" style="transition: color 0.2s;"><i class="bi bi-trash3 fs-5"></i></a>
+                                                    </div>
+
+                                                    <div class="rounded shadow-sm d-flex flex-column justify-content-center align-items-center" style="background-color: #382f2f; color: #f2ebd9; padding: 8px 12px;">
+                                                        <span class="fw-bold fs-4 fs-md-3" style="line-height: 1;">${cardRate}</span>
+                                                        <span class="fw-bold" style="font-size: 0.6rem; letter-spacing: 1px; margin-top: 4px;">RATING</span>
+                                                    </div>
                                                 </div>
                                             </div>
-
                                             <div class="p-3 rounded text-start" style="background-color: #f2ebd9; border-left: 5px solid #bbae87;">
                                                 <p class="card-text mb-0" style="white-space: pre-wrap; color: #55514b; font-size: 1.05rem; font-style: italic;">"${review.review_text}"</p>
                                             </div>
@@ -1407,9 +1434,9 @@ app.get("/profile", async (req, res) => {
                                         const currentSort = "${sortOrder}";
                                         const labels = {
                                             'newest': 'Newest First',
-                                            'rating_desc': 'Highest Rated',
-                                            'price_asc': 'Lowest Price',
                                             'price_desc': 'Highest Price',
+                                            'price_asc': 'Lowest Price',
+                                            'rating_desc': 'Highest Rated',
                                             'alpha_asc': 'Restaurant (A-Z)'
                                         };
 
@@ -1488,6 +1515,210 @@ app.get("/profile", async (req, res) => {
     } catch (err) {
         console.error("Error loading profile:", err);
         res.send("Error loading profile data.");
+    }
+});
+
+app.get("/edit/:id", async (req, res) => {
+    if (!req.isAuthenticated()) {
+        return res.redirect("/login");
+    }
+
+    const reviewId = req.params.id;
+    const userId = req.user.id;
+
+    try {
+        const result = await db.query(
+            "SELECT * FROM reviews WHERE id = $1 AND user_id = $2", 
+            [reviewId, userId]
+        );
+
+        if (result.rows.length === 0) {
+            return res.status(403).send("Review not found or you don't have permission to edit it.");
+        }
+
+        const reviewData = result.rows[0];
+        const formatedDateForInput = new Date(reviewData.date).toISOString().split('T')[0];
+        const editFormHtml =    `
+                                    <div class="container mt-5 mb-5 text-center">
+                                        <h2 class="fw-bold mb-4" style="color: #382f2f;">Edit Your Review</h2>
+                                        
+                                        <form action="/edit/${reviewData.id}" method="POST" class="mx-auto text-start p-4 shadow-sm" style="max-width: 600px; background-color: #ffffff; border-radius: 16px; border: 1px solid #d4c598;">
+                                            
+                                            <input type="hidden" name="restaurantName" value="${reviewData.restaurant_name}">
+                                            <input type="hidden" name="neighborhood" value="${reviewData.neighborhood}">
+                                            <input type="hidden" name="cuisine" value="${reviewData.cuisine}">
+                                            <input type="hidden" name="rating" value="${reviewData.rating}">
+
+                                            <div class="mb-3">
+                                                <label class="form-label fw-bold" style="color: #382f2f;">Price Range</label>
+                                                <div class="dropdown w-100">
+                                                    <input type="hidden" id="priceInput" name="priceRange" value="${reviewData.price}">
+                                                    
+                                                    <button class="form-control dropdown-toggle w-100 d-flex justify-content-between align-items-center" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="background-color: #ffffff; cursor: pointer; border: 1px solid #ced4da; border-radius: 0.375rem;">
+                                                        <span class="dropdown-text" id="priceDropdownText">${reviewData.price}</span>
+                                                    </button>
+                                                    
+                                                    <ul class="dropdown-menu w-100 shadow-sm" id="priceDropdownMenu">
+                                                        <li><a class="dropdown-item" href="#" data-value="$">$</a></li>
+                                                        <li><a class="dropdown-item" href="#" data-value="$$">$$</a></li>
+                                                        <li><a class="dropdown-item" href="#" data-value="$$$">$$$</a></li>
+                                                        <li><a class="dropdown-item" href="#" data-value="$$$$">$$$$</a></li>
+                                                        <li><a class="dropdown-item" href="#" data-value="$$$$$">$$$$$</a></li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="mb-3">
+                                                <label class="form-label fw-bold" style="color: #382f2f;">Date Visited</label>
+                                                <input type="date" name="dateVisited" class="form-control" value="${formatedDateForInput}" required>
+                                            </div>
+
+                                            <div class="mb-4">
+                                                <label class="form-label fw-bold" style="color: #382f2f;">Review</label>
+                                                <textarea name="reviewText" class="form-control" rows="4" required>${reviewData.review_text}</textarea>
+                                            </div>
+
+                                            <div class="d-flex justify-content-between mt-4">
+                                                <a href="/profile" class="btn btn-outline-secondary px-4 fw-bold">Cancel</a>
+                                                <button type="submit" class="btn text-white px-4 fw-bold" style="background-color: #382f2f;">Save Changes</button>
+                                            </div>
+                                        </form>
+
+                                        <script>
+                                            (function() {
+                                                const priceItems = document.querySelectorAll('#priceDropdownMenu .dropdown-item');
+                                                const priceInput = document.getElementById('priceInput');
+                                                const priceText = document.getElementById('priceDropdownText');
+
+                                                priceItems.forEach(item => {
+                                                    item.addEventListener('click', function(e) {
+                                                        e.preventDefault(); 
+                                                        const val = this.getAttribute('data-value');
+                                                        
+                                                        priceInput.value = val;
+                                                        priceText.textContent = val;
+                                                    });
+                                                });
+                                            })();
+                                        </script>
+                                    </div>
+                                `;
+
+        res.render("index.ejs", {
+            activePage: "review", 
+            user: req.user,
+            reviewPage: editFormHtml, 
+            profilePage: "" 
+        });
+
+    } catch (err) {
+        console.error("Error fetching review for edit:", err);
+        res.status(500).send("Error loading edit page.");
+    }
+});
+
+app.post("/edit/:id", async (req, res) => {
+    if (!req.isAuthenticated()) {
+        return res.redirect("/login");
+    }
+
+    const reviewId = req.params.id;
+    const userId = req.user.id;
+    let { restaurantName, neighborhood, cuisine, priceRange, rating, dateVisited, reviewText } = req.body;
+
+    try {
+        await db.query(
+            `
+            UPDATE reviews 
+            SET restaurant_name = $1, neighborhood = $2, cuisine = $3, price = $4, rating = $5, date = $6, review_text = $7
+            WHERE id = $8 AND user_id = $9
+            `,
+            [restaurantName, neighborhood, cuisine, priceRange, rating, dateVisited, reviewText, reviewId, userId]
+        );
+
+        res.send(`<script>alert('Post edited successfully!'); window.location.href = '/profile';</script>`);
+    } catch (err) {
+        console.error("Error updating review:", err);
+        res.status(500).send("Error updating your review.");
+    }
+});
+
+app.get("/delete/:id", async (req, res) => {
+    if (!req.isAuthenticated()) {
+        return res.redirect("/login");
+    }
+
+    const reviewId = req.params.id;
+    const userId = req.user.id;
+
+    try {
+        const result = await db.query(
+            "SELECT * FROM reviews WHERE id = $1 AND user_id = $2", 
+            [reviewId, userId]
+        );
+
+        if (result.rows.length === 0) {
+            return res.status(403).send("Review not found.");
+        }
+
+        const reviewData = result.rows[0];
+
+        const deleteConfirmationHtml =  `
+                                            <div class="container mt-5 mb-5 d-flex justify-content-center align-items-center" style="min-height: 50vh;">
+                                                <div class="card shadow-lg border-0 text-center p-4 p-md-5" style="border-radius: 16px; background-color: #ffffff; max-width: 500px; width: 100%; border-top: 6px solid #dc3545;">
+                                                    
+                                                    <div class="mb-4">
+                                                        <i class="bi bi-exclamation-circle text-danger" style="font-size: 4.5rem;"></i>
+                                                    </div>
+                                                    
+                                                    <h3 class="fw-bold mb-3" style="color: #382f2f;">Are you sure?</h3>
+                                                    
+                                                    <p class="fs-5 mb-4" style="color: #55514b;">
+                                                        You are about to delete your review for: "${reviewData.restaurant_name}"</strong><br>
+                                                        <span style="font-size: 1rem;">This action cannot be undone.</span>
+                                                    </p>
+                                                    
+                                                    <form action="/delete/${reviewData.id}" method="POST" class="d-flex justify-content-center gap-3 mt-2">
+                                                        <a href="/profile" class="btn btn-outline-secondary px-4 py-2 fw-bold" style="border-radius: 8px;">Cancel</a>
+                                                        <button type="submit" class="btn btn-danger px-4 py-2 fw-bold shadow-sm" style="border-radius: 8px;">Yes, Delete It</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        `;
+
+        res.render("index.ejs", {
+            activePage: "profile", 
+            user: req.user,
+            profilePage: deleteConfirmationHtml 
+        });
+
+    } catch (err) {
+        console.error("Error fetching review for deletion:", err);
+        res.status(500).send("Error loading delete confirmation page.");
+    }
+});
+
+app.post("/delete/:id", async (req, res) => {
+    if (!req.isAuthenticated()) {
+        return res.redirect("/login");
+    }
+
+    const reviewId = req.params.id;
+    const userId = req.user.id;
+
+    try {
+        await db.query(
+            `
+            DELETE from reviews
+            WHERE id = $1 AND user_id = $2
+            `,
+            [reviewId, userId]
+        );
+
+        res.redirect("/profile");
+    } catch (err) {
+        console.error("Error updating review:", err);
+        res.status(500).send("Error deleting your review.");
     }
 });
 
