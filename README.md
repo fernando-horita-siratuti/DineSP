@@ -52,9 +52,11 @@ Here are some screenshots of the main user flow:
 
 | Home Page (Search) | Search Results |
 | :---: | :---: |
-| <img src="/public/images/home.png" width="400" alt="Home Desktop"> | <img src="/public/images/restaurantCards.png" width="400" alt="Rstaurant Cards Desktop"> |
+| <img src="/public/images/home.png" width="400" alt="Home Page"> | <img src="/public/images/restaurantCards.png" width="400" alt="Restaurant Cards"> |
 | **Reading a Review** | **Posting a Review** |
-| <img src="/public/images/reviewCard.png" width="400" alt="Review Card Desktop"> | <img src="/public/images/review.png" width="400" alt="Review Desktop"> |
+| <img src="/public/images/reviewCard.png" width="400" alt="Review Card"> | <img src="/public/images/review.png" width="400" alt="Review Page"> |
+| **My Profile (Private)** | **Other User's Profile (Public)** |
+| <img src="/public/images/ownProfile.png" width="400" alt="Own Profile Page"> | <img src="/public/images/otherUserProfile.png" width="400" alt="Other User Profile Page"> |
 
 ## <a id="live-demo"></a>🌐 Live Demo
 
