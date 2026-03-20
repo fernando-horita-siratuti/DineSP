@@ -4,13 +4,14 @@
 
 # Dine SP - Restaurant Review Platform
 
-A full-stack web application designed for users to explore, view and post reviews of restaurants across the city of São Paulo. The system features dynamic filtering, sorting algorithms and a fully responsive mobile-first UI.
+A full-stack web application designed for users to explore, view and post reviews of restaurants across the city of São Paulo. The system features dynamic filtering, sorting algorithms, secure authentication, a relational database and a fully responsive mobile-first UI.
 
 <div align="center">
 
 ![Maintained](https://img.shields.io/badge/Maintained-yes-green.svg)
 ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat&logo=javascript&logoColor=black)
 ![Node.js](https://img.shields.io/badge/Node.js-43853D?style=flat&logo=node.js&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=flat&logo=postgresql&logoColor=white)
 ![Bootstrap](https://img.shields.io/badge/Bootstrap-563D7C?style=flat&logo=bootstrap&logoColor=white)
 ![Contributions](https://img.shields.io/badge/contributions-welcome-green.svg)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
@@ -24,8 +25,7 @@ A full-stack web application designed for users to explore, view and post review
 - [📸 Preview](#preview)
 - [🌐 Live Demo](#live-demo)
 - [📋 Requirements](#requirements)
-- [🚀 Installation](#installation)
-- [🗄️ Data Sources](#data-sources)
+- [🗄️ Database Architecture](#database-architecture)
 - [💡 Basic Usage](#basic-usage)
 - [📁 Project Structure](#project-structure)
 - [⚙️ Technical Details](#technical-details)
@@ -39,12 +39,12 @@ A full-stack web application designed for users to explore, view and post review
 
 ## <a id="features"></a>🎯 Features
 
-- **Dynamic Restaurant Search**: Filter establishments by specific neighborhoods and cuisines in São Paulo.
+- **Secure Authentication**: Users can register and log in securely using Google OAuth 2.0 integration.
+- **Relational Database**: Persistent data storage handling user profiles and community restaurant reviews.
+- **Dynamic Restaurant Search**: Filter establishments by specific neighborhoods and cuisines in São Paulo, featuring geolocation capabilities to find places near the user.
 - **Smart Sorting System**: Order restaurant results by A-Z (Default), Highest Rated, Lowest Price or Highest Price.
-- **Community Reviews**: Users can post detailed reviews including ratings (0-10), price ranges ($ to $$$$$), date visited and textual feedback.
-- **Automated Statistics**: The system dynamically calculates average ratings and price ranges based on user-submitted reviews.
+- **Automated Statistics**: The system dynamically calculates average ratings, total reviews and top preferences for user profiles.
 - **Responsive Design**: Fully optimized for mobile devices with responsive cards, dropdowns and custom pagination.
-- **Public API Integration**: Fetches real restaurant data and locations dynamically.
 
 ## <a id="preview"></a>📸 Preview
 
@@ -58,7 +58,7 @@ Here are some screenshots of the main user flow:
 
 ## <a id="live-demo"></a>🌐 Live Demo
 
-The application is successfully deployed and hosted online! You can test all the features directly in your browser without needing to run it locally.
+The application is successfully deployed and hosted online! You can test all the features directly in your browser.
 
 👉 **[Click here to access Dine SP](https://dine-sp.onrender.com/)**
 
@@ -66,73 +66,28 @@ The application is successfully deployed and hosted online! You can test all the
 
 ## <a id="requirements"></a>📋 Requirements
 
-- **Node.js**: v14.x or higher
-- **npm**: v6.x or higher (Node Package Manager)
 - **Web Browser**: Chrome, Firefox, Safari or Edge
-- **Internet Connection**: Required for fetching public API data and Bootstrap CDNs.
+- **Internet Connection**: Required for fetching public API data, authenticating via Google and loading CDNs.
 
-## <a id="installation"></a>🚀 Installation
+## <a id="database-architecture"></a>🗄️ Database Architecture
 
-### 1. Clone the Repository
+This project utilizes a robust backend architecture, combining a public API for location data with a custom PostgreSQL relational database for user-generated content.
 
-```bash
-git clone https://github.com/fernando-horita-siratuti/Restaurant-Review-Project
-```
+### 1. PostgreSQL Database (Backend Storage)
+The application relies on a cloud-hosted PostgreSQL database to ensure data persistence, security and complex relationship mapping. The schema is divided into two main tables:
+- **`users` Table**: Handles authentication data, storing secure profiles.
+- **`reviews` Table**: Stores the core content submitted by users, including the restaurant name, neighborhood, cuisine, rating, price range, date visited and the textual feedback. It holds a foreign key linking back to the `users` table.
 
-### 2. Install Dependencies
-
-Install all required Node.js packages (Express, EJS, etc.):
-
-```bash
-npm i
-```
-
-### 3. Configure Environment Variables
-
-This project uses the Geoapify API to fetch restaurant data. You will need a free API key to run it locally.
-
-1. Get a free API key at [Geoapify](https://www.geoapify.com/).
-2. Create a file named `.env` in the root directory of the project.
-3. Add your API key to the `.env` file like this:
-
-```env
-GEOAPIFY_API_KEY=your_api_key_here
-```
-
-### 4. Run the Application
-
-Start the local server:
-
-```bash
-node index.js
-```
-*Note: Alternatively, you can use `npm start` if configured in your package.json or use `nodemon index.js` if you have nodemon installed.*
-
-### 5. Access the Platform
-
-Open your web browser and navigate to:
-```text
-http://localhost:3000
-```
-
-## <a id="data-sources"></a>🗄️ Data Sources
-
-This project utilizes a hybrid data approach:
-
-### 1. Public API - Restaurant Data
-- **What it provides**: Dynamic fetching of establishment names, locations and categories (bakery, bar, etc.).
-- **Usage**: Used to populate the "Restaurants Found" list based on the user's neighborhood and cuisine filters.
-
-### 2. Local Storage (Client-Side) - Reviews Data
-- **What it provides**: Persistence for user-generated content (username, rating, price range, date and review text).
-- **Usage**: Simulates a database environment for the frontend, allowing dynamic calculation of average ratings and rendering of community feedback.
+### 2. Geoapify API (Location & Establishment Data)
+- **What it provides**: Dynamic fetching of establishment names, addressesand categories.
+- **Usage**: Used to populate the "Restaurants Found" list based on the user's filters.
 
 ## <a id="basic-usage"></a>💡 Basic Usage
 
-1. **Home Page**: Select a **Neighborhood** (e.g., Saúde, Liberdade, Pinheiros) and a **Cuisine** (e.g., Japanese, Italian, Brazilian Barbecue) from the dropdown menus.
+1. **Home Page**: Select a **Neighborhood** and a **Cuisine** from the dropdown menus.
 2. **Search Results**: Browse the generated list of restaurants. Use the top-right dropdown to sort the results.
 3. **View Reviews**: Click "See the reviews" on any restaurant card to read what the community is saying.
-4. **Post a Review**: Fill out the elegant form providing your username, the restaurant name, neighborhood, cuisine, rating, date visited and your review text. Submit to see it instantly added to the platform.
+4. **Post a Review**: Log in, fill out the form providing your rating, date visited and review text. Submit to see it instantly added to the platform and reflected in your public user profile stats.
 
 ## <a id="project-structure"></a>📁 Project Structure
 
@@ -140,48 +95,34 @@ This project utilizes a hybrid data approach:
 public/                 # Static assets
 ├── css/
 │   └── style.css       # Custom stylesheets (Mobile-first)
+├── js/
+|   └── review.js
 └── images/             # Backgrounds, Chef Hat pagination icons, etc.
-    └── chefHat.png
-    └── home.png
-    └── logo.png
-    └── restaurant.png
-    └── restaurantCards.png
-    └── review.png
-    └── reviewCard.png
 views/                  # EJS Templates
 | └── partials
-|      └── footer.ejs
-|      └── header.ejs
-└── index.ejs           # Main dynamic view 
-index.js                # Express server and routing logic
+|     └── footer.ejs
+|     └── header.ejs
+└── index.ejs           # Main dynamic view
+.env                    # API key, google client id, etc.
+index.js                # Express server, DB connections and routing logic
 LICENSE                 # MIT License
 package.json            # Project metadata and dependencies
-package-lock.json       # Dependency version lock
 README.md               # This file
 ```
 
 ## <a id="technical-details"></a>⚙️ Technical Details
 
-### Responsive Flexbox Layouts
-The UI relies heavily on Bootstrap 5 utility classes combined with custom CSS Media Queries. Elements like the rating boxes, sorting dropdowns and tags (`d-block d-md-inline`) dynamically stack on mobile devices (`max-width: 767px`) to prevent horizontal overflow and overlapping.
+### SQL Subqueries and Aggregations
+The backend extensively uses complex SQL queries to deliver a seamless frontend experience. For example, user profiles dynamically display statistics (Total Reviews, Top Neighborhood, Top Cuisine) using nested `SELECT` and `GROUP BY` subqueries, calculating the user's habits in real-time.
 
-### Dynamic Rendering
-The backend uses **EJS (Embedded JavaScript templating)** to inject HTML dynamically based on the `req.query` parameters (Neighborhood, Cuisine, Page number). 
-
-### Data Parsing and Normalization
-To cross-reference API data with user reviews, the system normalizes strings by removing special characters and standardizing casing:
-```javascript
-const rawName = restTexts[i].replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
-```
+### Authentication Flow
+User sessions are managed securely. When a user authenticates via Google, the backend verifies the credentials, establishes a secure session cookie and restricts access to specific routes (like posting, editing, or deleting reviews) only to authenticated users.
 
 ## <a id="project-limitations"></a>⚠️ Project Limitations
 
 As this is a learning project, there are a few technical limitations to be aware of:
 
-### 1. No Real Database
-Currently, this project does not utilize a backend database (like SQL or MongoDB) because I have not yet learned how to implement one. To simulate a database environment, all user reviews are temporarily stored in the browser's `localStorage`. This means that reviews are not shared between different users or devices, and they will be permanently lost if you clear your browser cache or use an Incognito window.
-
-### 2. Public API Inaccuracies
+### Public API Inaccuracies
 All restaurant data is fetched dynamically from a free public [API](https://apidocs.geoapify.com/docs). Unfortunately, this API is not 100% precise, which means you might encounter some data inconsistencies while browsing the platform, such as:
 - Missing street numbers in some restaurant addresses.
 - Incorrect address locations.
@@ -192,8 +133,8 @@ All restaurant data is fetched dynamically from a free public [API](https://apid
 
 As I continue to learn and evolve this project, the following features are planned for future updates:
 
-### 1. Database Integration
-Replace the current `localStorage` mock system with a robust backend database (such as PostgreSQL or MongoDB). This will allow reviews to be persistent, safely stored on a server, and accessible to all users across different devices.
+### 1. Enhanced Restaurant Details & Reservations
+Integrate advanced APIs to fetch comprehensive restaurant data, including official websites, dish photos and full menus. Additionally, implement a reservation system allowing users to book tables directly through the Dine SP platform.
 
 ### 2. Michelin Star Recognition API
 Integrate an advanced API capable of identifying if a restaurant has been awarded Michelin stars. Highlighting these prestigious establishments with special UI badges will instantly attract users' attention and provide a premium layer of information to the platform.
