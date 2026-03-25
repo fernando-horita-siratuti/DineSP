@@ -1582,24 +1582,29 @@ app.get("/edit/:id", async (req, res) => {
                                             <input type="hidden" name="restaurantName" value="${reviewData.restaurant_name}">
                                             <input type="hidden" name="neighborhood" value="${reviewData.neighborhood}">
                                             <input type="hidden" name="cuisine" value="${reviewData.cuisine}">
-                                            <input type="hidden" name="rating" value="${reviewData.rating}">
-
-                                            <div class="mb-3">
-                                                <label class="form-label fw-bold" style="color: #382f2f;">Price Range</label>
-                                                <div class="dropdown w-100">
-                                                    <input type="hidden" id="priceInput" name="priceRange" value="${reviewData.price}">
-                                                    
-                                                    <button class="form-control dropdown-toggle w-100 d-flex justify-content-between align-items-center" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="background-color: #ffffff; cursor: pointer; border: 1px solid #ced4da; border-radius: 0.375rem;">
-                                                        <span class="dropdown-text" id="priceDropdownText">${reviewData.price}</span>
-                                                    </button>
-                                                    
-                                                    <ul class="dropdown-menu w-100 shadow-sm" id="priceDropdownMenu">
-                                                        <li><a class="dropdown-item" href="#" data-value="$">$</a></li>
-                                                        <li><a class="dropdown-item" href="#" data-value="$$">$$</a></li>
-                                                        <li><a class="dropdown-item" href="#" data-value="$$$">$$$</a></li>
-                                                        <li><a class="dropdown-item" href="#" data-value="$$$$">$$$$</a></li>
-                                                        <li><a class="dropdown-item" href="#" data-value="$$$$$">$$$$$</a></li>
-                                                    </ul>
+                                            <div class="row">
+                                                <div class="col-md-6 mb-3">
+                                                    <label class="form-label fw-bold" style="color: #382f2f;">Rating (0-10)</label>
+                                                    <input type="number" name="rating" class="form-control" value="${reviewData.rating}" min="0" max="10" step="1" required>
+                                                </div>
+                                                
+                                                <div class="col-md-6 mb-3">
+                                                    <label class="form-label fw-bold" style="color: #382f2f;">Price Range</label>
+                                                    <div class="dropdown w-100">
+                                                        <input type="hidden" id="priceInput" name="priceRange" value="${reviewData.price}">
+                                                        
+                                                        <button class="form-control dropdown-toggle w-100 d-flex justify-content-between align-items-center" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="background-color: #ffffff; cursor: pointer; border: 1px solid #ced4da; border-radius: 0.375rem;">
+                                                            <span class="dropdown-text" id="priceDropdownText">${reviewData.price}</span>
+                                                        </button>
+                                                        
+                                                        <ul class="dropdown-menu w-100 shadow-sm" id="priceDropdownMenu">
+                                                            <li><a class="dropdown-item" href="#" data-value="$">$</a></li>
+                                                            <li><a class="dropdown-item" href="#" data-value="$$">$$</a></li>
+                                                            <li><a class="dropdown-item" href="#" data-value="$$$">$$$</a></li>
+                                                            <li><a class="dropdown-item" href="#" data-value="$$$$">$$$$</a></li>
+                                                            <li><a class="dropdown-item" href="#" data-value="$$$$$">$$$$$</a></li>
+                                                        </ul>
+                                                    </div>
                                                 </div>
                                             </div>
                                             
