@@ -126,7 +126,6 @@ As this is a learning project, there are a few technical limitations to be aware
 
 ### Public API Inaccuracies
 All restaurant data is fetched dynamically from a free public [API](https://apidocs.geoapify.com/docs). Unfortunately, this API is not 100% precise, which means you might encounter some data inconsistencies while browsing the platform, such as:
-- Missing street numbers in some restaurant addresses.
 - Incorrect address locations.
 - Misspelled or incorrectly formatted restaurant names.
 - Incomplete database coverage, meaning some restaurants might not be retrievable by the API.
